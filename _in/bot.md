@@ -9,3 +9,17 @@ Keep your token secure and store it safely, it can be used by anyone to control 
 
 For a description of the Bot API, see this page: https://core.telegram.org/bots/api
 ```
+
+```
+Use this token to access the HTTP API:
+
+telegram
+
+8203491909:AAEF2qHzlB3WsDY9Mg8Ea7Qxe9ED5aJ-MP8
+
+  
+
+GEMINI_API_KEY
+
+AIzaSyDh8OqxtweHq3wkERlaCBFFiYb2XLgev4M
+```
