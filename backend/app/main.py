@@ -1,24 +1,73 @@
-from fastapi import FastAPI, HTTPException
+import os
+import logging
+from contextlib import asynccontextmanager
+from datetime import datetime
+
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from datetime import datetime
-import os
 from dotenv import load_dotenv
 
-# Load environment variables
+# Telegram ліби
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import Update, WebAppInfo
+from aiogram.filters import CommandStart
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
+# Твої сервіси
+from app.astrology import calculate_simple
+from app.ai_engine import generate_verdict, generate_location_error_verdict
+
 load_dotenv()
 
-app = FastAPI(title="Retrograde Department API", version="1.0.0")
+# --- CONFIG ---
+TOKEN = os.getenv("TELEGRAM_TOKEN")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "https://retrograde-project.vercel.app")
 
-# CORS setup - allow frontend origins
+# Налаштування логів
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# --- BOT LOGIC ---
+bot = Bot(token=TOKEN)
+dp = Dispatcher()
+
+@dp.message(CommandStart())
+async def cmd_start(message: types.Message):
+    builder = InlineKeyboardBuilder()
+    builder.button(
+        text="🚪 УВІЙТИ В ТЕРМІНАЛ", 
+        web_app=WebAppInfo(url=FRONTEND_URL)
+    )
+    await message.answer(
+        f"Вітаю, об'єкт {message.from_user.first_name}.\n\n"
+        "Ви підключились до Департаменту Ретроградності.\n"
+        "Ініціюйте протокол аналізу за кнопкою нижче.",
+        reply_markup=builder.as_markup()
+    )
+
+# --- LIFECYCLE (Керування вебхуком) ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # При старті сервера встановлюємо вебхук
+    if WEBHOOK_URL:
+        logger.info(f"Setting Webhook to: {WEBHOOK_URL}")
+        await bot.set_webhook(url=WEBHOOK_URL, drop_pending_updates=True)
+    else:
+        logger.warning("WEBHOOK_URL not set! Telegram bot will not work.")
+    
+    yield
+    
+    # При зупинці — видаляємо
+    await bot.delete_webhook()
+
+app = FastAPI(title="Retrograde Department API", version="1.1.0", lifespan=lifespan)
+
+# CORS setup
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Next.js dev
-        "https://retrograde-project.vercel.app",  # Production frontend
-        os.getenv("FRONTEND_URL", "http://localhost:3000"),
-        "*"  # Allow all origins for now (remove in production if needed)
-    ],
+    allow_origins=["*"], # Для MVP дозволяємо все
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -27,75 +76,44 @@ app.add_middleware(
 # Pydantic models
 class PredictionRequest(BaseModel):
     city: str
-    date: str  # Format: "1991-08-24"
+    date: str
 
 class PredictionResponse(BaseModel):
     status: str
     data: dict
 
+# --- ENDPOINTS ---
+
 @app.get("/")
 async def root():
-    return {"message": "Retrograde Department API is operational"}
+    return {"message": "Retrograde Department API is operational", "bot_active": bool(TOKEN)}
 
-@app.get("/api/health")
-async def health_check():
-    return {"status": "healthy", "service": "retrograde-oracle"}
+@app.post("/webhook")
+async def telegram_webhook(request: Request):
+    """Сюди Telegram шле повідомлення"""
+    update = Update.model_validate(await request.json(), context={"bot": bot})
+    await dp.feed_update(bot, update)
+    return {"ok": True}
 
-# Import our services
-from .astrology import calculate_simple
-from .ai_engine import generate_verdict, generate_location_error_verdict
-
-# Main prediction endpoint
 @app.post("/api/predict", response_model=PredictionResponse)
 async def predict(request: PredictionRequest):
+    """Сюди сайт шле запити"""
     try:
-        print(f"Processing request for {request.city}, {request.date}")
-        
-        # Step 1: Calculate astrology
+        # 1. Розрахунок астрології
         try:
             astral_data = calculate_simple(request.city, request.date)
-            print(f"Astral data calculated: {astral_data}")
-        except Exception as astro_error:
-            print(f"Astrology failed: {astro_error}")
-            # If astrology fails, generate location error verdict
+        except Exception as e:
+            logger.error(f"Astro fail: {e}")
             ai_response = generate_location_error_verdict(request.city)
-            return PredictionResponse(
-                status="success",  # Still success, just different type of response
-                data={
-                    "astral_data": {},
-                    **ai_response
-                }
-            )
+            return PredictionResponse(status="success", data={"astral_data": {}, **ai_response})
+
+        # 2. Генерація AI вердикту
+        ai_response = generate_verdict(astral_data)
         
-        # Step 2: Generate AI verdict
-        try:
-            ai_response = generate_verdict(astral_data)
-            print(f"AI response generated: {ai_response}")
-        except Exception as ai_error:
-            print(f"AI generation failed: {ai_error}")
-            # Fallback response
-            ai_response = {
-                "verdict": "Системи Департаменту тимчасово перевантажені космічною бюрократією. Спробуйте пізніше.",
-                "entropy": "SYSTEM_ERROR",
-                "case_id": "RD-500-ERROR"
-            }
-        
-        # Step 3: Return combined response
         return PredictionResponse(
             status="success",
-            data={
-                "astral_data": astral_data,
-                **ai_response
-            }
+            data={"astral_data": astral_data, **ai_response}
         )
-        
     except Exception as e:
-        print(f"Unexpected error: {e}")
-        raise HTTPException(
-            status_code=500,
-            detail="Internal server error in Retrograde Department systems"
-        )
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        logger.error(f"General error: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")

@@ -1,34 +1,27 @@
-# Use Python slim image
+# 1. Образ
 FROM python:3.11-slim
 
-# Set working directory
+# 2. Робоча директорія
 WORKDIR /app
 
-# Install system dependencies for kerykeion (Swiss Ephemeris)
+# 3. Системні ліби для kerykeion
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# 4. Встановлення залежностей
 COPY requirements.txt .
-
-# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
+# 5. Копіювання коду
+# Важливо: ми копіюємо папку app, щоб структура була /app/app/main.py
 COPY app/ ./app/
-COPY run_bot.py .
-COPY start.sh .
 
-# Make start script executable
-RUN chmod +x start.sh
-
-# Expose port (Cloud Run will override with PORT env variable)
+# 6. Порт (Cloud Run ігнорує EXPOSE, але для порядку лишимо 8080)
 EXPOSE 8080
 
-# Set default PORT for local development
-ENV PORT=8000
-
-# Run the application using start script
-CMD ["./start.sh"]
+# 7. ЗАПУСК
+# Прямий запуск uvicorn. Він підхопить порт від Гугла через $PORT.
+# Ми вказуємо шлях app.main:app, тому що папка app лежить у робочій директорії.
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
