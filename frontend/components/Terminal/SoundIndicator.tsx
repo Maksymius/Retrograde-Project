@@ -27,15 +27,15 @@ export function SoundIndicator({
   const getIndicatorStyle = () => {
     switch (type) {
       case 'typing':
-        return 'bg-retro-accent'
+        return 'bg-green-400'
       case 'beep':
-        return 'bg-retro-primary'
+        return 'bg-amber-500'
       case 'connection':
         return 'bg-blue-400'
       case 'error':
-        return 'bg-retro-error'
+        return 'bg-red-500'
       default:
-        return 'bg-retro-accent'
+        return 'bg-green-400'
     }
   }
 

@@ -24,30 +24,30 @@ export function ResultCard({ date, location }: ResultCardProps) {
   return (
     <Card variant="terminal" className="w-full max-w-2xl mx-auto">
       <CardHeader>
-        <CardTitle className="text-retro-accent flex items-center gap-2">
+        <CardTitle className="text-green-400 flex items-center gap-2">
           <span className="animate-pulse">●</span>
           TEMPORAL ANALYSIS COMPLETE
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4 font-mono text-sm">
         {/* Query Info */}
-        <div className="grid grid-cols-2 gap-4 pb-4 border-b border-retro-border">
+        <div className="grid grid-cols-2 gap-4 pb-4 border-b border-gray-600">
           <div>
-            <span className="text-retro-text/60">TARGET DATE:</span>
-            <div className="text-retro-primary font-semibold">{date}</div>
+            <span className="text-gray-400">TARGET DATE:</span>
+            <div className="text-amber-500 font-semibold">{date}</div>
           </div>
           <div>
-            <span className="text-retro-text/60">LOCATION:</span>
-            <div className="text-retro-primary font-semibold">{location}</div>
+            <span className="text-gray-400">LOCATION:</span>
+            <div className="text-amber-500 font-semibold">{location}</div>
           </div>
         </div>
         
         {/* Analysis Results */}
         <div className="space-y-3">
-          <div className="text-retro-accent mb-2">TEMPORAL SIGNATURE:</div>
+          <div className="text-green-400 mb-2">TEMPORAL SIGNATURE:</div>
           
-          <div className="bg-retro-surface/30 p-3 rounded border border-retro-border/50">
-            <div className="text-retro-text">
+          <div className="bg-gray-800/30 p-3 rounded border border-gray-600/50">
+            <div className="text-gray-200">
               {!showDetails ? (
                 <TypingAnimation 
                   text={`Status: ${mockResults.temporalSignature} | Probability: ${mockResults.probability}`}
@@ -56,10 +56,10 @@ export function ResultCard({ date, location }: ResultCardProps) {
                 />
               ) : (
                 <>
-                  <div className="mb-2">Status: <span className="text-retro-primary">{mockResults.temporalSignature}</span></div>
-                  <div className="mb-2">Probability: <span className="text-retro-accent">{mockResults.probability}</span></div>
-                  <div className="mb-2">Coordinates: <span className="text-retro-text/80">{mockResults.coordinates}</span></div>
-                  <div className="mb-2">Timeline: <span className="text-retro-primary">{mockResults.timelineStatus}</span></div>
+                  <div className="mb-2">Status: <span className="text-amber-500">{mockResults.temporalSignature}</span></div>
+                  <div className="mb-2">Probability: <span className="text-green-400">{mockResults.probability}</span></div>
+                  <div className="mb-2">Coordinates: <span className="text-gray-300">{mockResults.coordinates}</span></div>
+                  <div className="mb-2">Timeline: <span className="text-amber-500">{mockResults.timelineStatus}</span></div>
                   <div>Risk Level: <span className="text-yellow-400">{mockResults.riskLevel}</span></div>
                 </>
               )}
@@ -67,9 +67,9 @@ export function ResultCard({ date, location }: ResultCardProps) {
           </div>
 
           {showDetails && (
-            <div className="mt-4 p-3 bg-retro-accent/10 border border-retro-accent/30 rounded">
-              <div className="text-retro-accent text-xs mb-1">SYSTEM MESSAGE:</div>
-              <div className="text-retro-text/90 text-xs">
+            <div className="mt-4 p-3 bg-green-400/10 border border-green-400/30 rounded">
+              <div className="text-green-400 text-xs mb-1">SYSTEM MESSAGE:</div>
+              <div className="text-gray-200 text-xs">
                 Temporal anomaly detected at specified coordinates. 
                 Recommend further investigation with enhanced protocols.
               </div>

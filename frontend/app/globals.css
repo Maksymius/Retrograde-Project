@@ -1,14 +1,30 @@
 @import "tailwindcss";
 
+@theme {
+  --color-retro-bg: #050505;
+  --color-retro-surface: #111111;
+  --color-retro-border: #333333;
+  --color-retro-text: #E0E0E0;
+  --color-retro-primary: #FFB000;
+  --color-retro-accent: #00FF41;
+  --color-retro-error: #FF3333;
+  
+  --font-family-mono: var(--font-jetbrains-mono), monospace;
+  --font-family-sans: var(--font-inter), system-ui, sans-serif;
+}
+
 body {
-  @apply bg-retro-bg text-retro-text font-sans;
+  background-color: var(--color-retro-bg);
+  color: var(--color-retro-text);
+  font-family: var(--font-family-sans);
   font-feature-settings: "rlig" 1, "calt" 1;
 }
 
 /* Terminal cursor */
 .cursor::after {
   content: '|';
-  @apply animate-blink text-retro-accent;
+  animation: blink 1s step-end infinite;
+  color: var(--color-retro-accent);
 }
 
 /* Scan lines effect */
@@ -35,20 +51,6 @@ body {
     inset 0 0 20px rgba(0, 255, 65, 0.1);
 }
 
-/* Terminal input styles */
-.terminal-input {
-  @apply bg-retro-surface/50 border border-retro-accent text-retro-accent font-mono;
-  @apply placeholder:text-retro-accent/60 focus:ring-retro-accent;
-  @apply backdrop-blur-sm terminal-glow;
-}
-
-/* Terminal button styles */
-.terminal-button {
-  @apply bg-retro-primary text-retro-bg border-retro-primary font-mono font-medium;
-  @apply hover:bg-retro-primary/90 focus:ring-retro-primary;
-  @apply shadow-lg shadow-retro-primary/25 transition-all duration-200;
-}
-
 /* Glitch animations */
 @keyframes glitch-slide {
   0% { transform: translateX(-2px); }
@@ -61,6 +63,11 @@ body {
 @keyframes flicker {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.8; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 
 /* Enhanced terminal effects */

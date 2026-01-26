@@ -36,8 +36,8 @@ export function TerminalInput({
 
   return (
     <div className={cn("relative", className)}>
-      <div className="flex items-center bg-retro-surface/50 border border-retro-accent rounded-lg p-4 terminal-glow">
-        <span className="text-retro-accent font-mono text-sm mr-2 whitespace-nowrap">
+      <div className="flex items-center bg-gray-900/50 border border-green-400 rounded-lg p-4 terminal-glow">
+        <span className="text-green-400 font-mono text-sm mr-2 whitespace-nowrap">
           {placeholder}
         </span>
         <Input
@@ -49,7 +49,7 @@ export function TerminalInput({
           autoFocus
         />
         <span className={cn(
-          "text-retro-accent font-mono text-sm ml-1",
+          "text-green-400 font-mono text-sm ml-1",
           showCursor ? "opacity-100" : "opacity-0"
         )}>
           |

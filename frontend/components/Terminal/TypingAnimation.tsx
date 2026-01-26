@@ -36,7 +36,7 @@ export function TypingAnimation({
     <span className={cn("font-mono", className)}>
       {displayedText}
       {currentIndex < text.length && (
-        <span className="animate-blink text-retro-accent">|</span>
+        <span className="animate-blink text-green-400">|</span>
       )}
     </span>
   )

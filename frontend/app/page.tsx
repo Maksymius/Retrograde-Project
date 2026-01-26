@@ -67,7 +67,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className="relative min-h-dvh bg-retro-bg overflow-hidden crt-effect">
+    <main className="relative min-h-dvh bg-black overflow-hidden crt-effect">
       {/* Sound indicator */}
       <SoundIndicator 
         type="connection" 
@@ -95,7 +95,7 @@ export default function HomePage() {
           {/* Terminal Header */}
           <GlitchEffect trigger={glitchTrigger} intensity="medium">
             <div className="text-center space-y-4">
-              <div className="font-mono text-retro-accent text-sm">
+              <div className="font-mono text-green-400 text-sm">
                 {!showWelcome ? (
                   <TypingAnimation 
                     text="RETROGRADE TEMPORAL INTERFACE v2.1.4"
@@ -111,10 +111,10 @@ export default function HomePage() {
               
               {showWelcome && !showResult && (
                 <div className="space-y-2">
-                  <h1 className="text-4xl md:text-6xl font-mono font-bold text-retro-primary">
+                  <h1 className="text-4xl md:text-6xl font-mono font-bold text-amber-500">
                     RETROGRADE
                   </h1>
-                  <p className="text-retro-text/80 font-mono text-sm">
+                  <p className="text-gray-300 font-mono text-sm">
                     Введіть дату та місце для аналізу темпоральних аномалій
                   </p>
                 </div>
@@ -146,7 +146,7 @@ export default function HomePage() {
                 </Button>
               </div>
               
-              <div className="text-center text-retro-text/60 font-mono text-xs">
+              <div className="text-center text-gray-400 font-mono text-xs">
                 Формат: DD.MM.YYYY, Місто (наприклад: 24.08.1991, Київ)
               </div>
             </div>
@@ -156,22 +156,22 @@ export default function HomePage() {
           {isConnecting && (
             <GlitchEffect trigger={glitchTrigger} intensity="low">
               <div className="text-center space-y-4">
-                <div className="font-mono text-retro-accent terminal-flicker">
+                <div className="font-mono text-green-400 terminal-flicker">
                   <TypingAnimation 
                     text="Connecting to Noosphere..."
                     speed={80}
                   />
                 </div>
-                <div className="font-mono text-retro-primary text-sm">
+                <div className="font-mono text-amber-500 text-sm">
                   <TypingAnimation 
                     text="Scanning temporal matrices... 47%"
                     speed={60}
                   />
                 </div>
                 <div className="flex justify-center">
-                  <div className="w-64 h-2 bg-retro-surface rounded-full overflow-hidden terminal-glow">
+                  <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden terminal-glow">
                     <div 
-                      className="h-full bg-gradient-to-r from-retro-accent to-retro-primary animate-pulse"
+                      className="h-full bg-gradient-to-r from-green-400 to-amber-500 animate-pulse"
                       style={{ width: '47%' }}
                     />
                   </div>
