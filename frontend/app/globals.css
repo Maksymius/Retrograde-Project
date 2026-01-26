@@ -48,3 +48,41 @@ body {
   @apply hover:bg-retro-primary/90 focus:ring-retro-primary;
   @apply shadow-lg shadow-retro-primary/25 transition-all duration-200;
 }
+
+/* Glitch animations */
+@keyframes glitch-slide {
+  0% { transform: translateX(-2px); }
+  25% { transform: translateX(2px); }
+  50% { transform: translateX(-1px); }
+  75% { transform: translateX(1px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Enhanced terminal effects */
+.terminal-flicker {
+  animation: flicker 0.15s infinite linear;
+}
+
+.crt-effect {
+  position: relative;
+}
+
+.crt-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%),
+    linear-gradient(0deg, transparent 50%, rgba(0, 255, 65, 0.02) 50%);
+  background-size: 100% 100%, 100% 2px;
+  pointer-events: none;
+  z-index: 1000;
+}

@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/Button'
 import { TerminalInput } from '@/components/Terminal/TerminalInput'
 import { TypingAnimation } from '@/components/Terminal/TypingAnimation'
 import { ScanLines } from '@/components/Terminal/ScanLines'
+import { GlitchEffect } from '@/components/Terminal/GlitchEffect'
+import { SoundIndicator } from '@/components/Terminal/SoundIndicator'
 import { ResultCard } from '@/components/ResultCard'
 
 export default function HomePage() {
@@ -13,6 +15,8 @@ export default function HomePage() {
   const [showWelcome, setShowWelcome] = useState(false)
   const [showResult, setShowResult] = useState(false)
   const [queryData, setQueryData] = useState({ date: '', location: '' })
+  const [glitchTrigger, setGlitchTrigger] = useState(false)
+  const [soundActive, setSoundActive] = useState(false)
 
   const parseInput = (inputStr: string) => {
     // Simple parsing for "DD.MM.YYYY, City" format
@@ -23,16 +27,34 @@ export default function HomePage() {
     }
   }
 
+  const triggerGlitch = () => {
+    setGlitchTrigger(true)
+    setTimeout(() => setGlitchTrigger(false), 100)
+  }
+
+  const triggerSound = (type: 'typing' | 'beep' | 'connection' | 'error') => {
+    setSoundActive(true)
+    setTimeout(() => setSoundActive(false), 200)
+  }
+
   const handleSubmit = () => {
     if (input.trim()) {
       const parsed = parseInput(input)
       setQueryData(parsed)
       setIsConnecting(true)
+      triggerSound('connection')
+      triggerGlitch()
       
-      // Simulate connection process
+      // Simulate connection process with random glitches
+      const glitchInterval = setInterval(() => {
+        if (Math.random() > 0.7) triggerGlitch()
+      }, 500)
+      
       setTimeout(() => {
+        clearInterval(glitchInterval)
         setIsConnecting(false)
         setShowResult(true)
+        triggerSound('beep')
       }, 3000)
     }
   }
@@ -41,10 +63,17 @@ export default function HomePage() {
     setInput('')
     setShowResult(false)
     setQueryData({ date: '', location: '' })
+    triggerSound('typing')
   }
 
   return (
-    <main className="relative min-h-dvh bg-retro-bg overflow-hidden">
+    <main className="relative min-h-dvh bg-retro-bg overflow-hidden crt-effect">
+      {/* Sound indicator */}
+      <SoundIndicator 
+        type="connection" 
+        active={soundActive}
+      />
+      
       {/* Scan lines effect */}
       <ScanLines intensity="low" />
       
@@ -64,30 +93,34 @@ export default function HomePage() {
         <div className="w-full max-w-2xl space-y-8">
           
           {/* Terminal Header */}
-          <div className="text-center space-y-4">
-            <div className="font-mono text-retro-accent text-sm">
-              {!showWelcome ? (
-                <TypingAnimation 
-                  text="RETROGRADE TEMPORAL INTERFACE v2.1.4"
-                  speed={30}
-                  onComplete={() => setShowWelcome(true)}
-                />
-              ) : (
-                "RETROGRADE TEMPORAL INTERFACE v2.1.4"
+          <GlitchEffect trigger={glitchTrigger} intensity="medium">
+            <div className="text-center space-y-4">
+              <div className="font-mono text-retro-accent text-sm">
+                {!showWelcome ? (
+                  <TypingAnimation 
+                    text="RETROGRADE TEMPORAL INTERFACE v2.1.4"
+                    speed={30}
+                    onComplete={() => setShowWelcome(true)}
+                  />
+                ) : (
+                  <span className={isConnecting ? 'terminal-flicker' : ''}>
+                    RETROGRADE TEMPORAL INTERFACE v2.1.4
+                  </span>
+                )}
+              </div>
+              
+              {showWelcome && !showResult && (
+                <div className="space-y-2">
+                  <h1 className="text-4xl md:text-6xl font-mono font-bold text-retro-primary">
+                    RETROGRADE
+                  </h1>
+                  <p className="text-retro-text/80 font-mono text-sm">
+                    Введіть дату та місце для аналізу темпоральних аномалій
+                  </p>
+                </div>
               )}
             </div>
-            
-            {showWelcome && !showResult && (
-              <div className="space-y-2">
-                <h1 className="text-4xl md:text-6xl font-mono font-bold text-retro-primary">
-                  RETROGRADE
-                </h1>
-                <p className="text-retro-text/80 font-mono text-sm">
-                  Введіть дату та місце для аналізу темпоральних аномалій
-                </p>
-              </div>
-            )}
-          </div>
+          </GlitchEffect>
 
           {/* Terminal Input Section */}
           {showWelcome && !isConnecting && !showResult && (
@@ -95,7 +128,10 @@ export default function HomePage() {
               <TerminalInput
                 placeholder="root@retrograde:~$ "
                 value={input}
-                onChange={setInput}
+                onChange={(value) => {
+                  setInput(value)
+                  if (Math.random() > 0.9) triggerSound('typing')
+                }}
                 onSubmit={handleSubmit}
                 className="w-full"
               />
@@ -104,7 +140,7 @@ export default function HomePage() {
                 <Button 
                   onClick={handleSubmit}
                   disabled={!input.trim()}
-                  className="px-8 py-3 text-lg font-mono"
+                  className="px-8 py-3 text-lg font-mono hover:shadow-retro-primary/50 transition-all duration-300"
                 >
                   ІНІЦІЮВАТИ ПРОТОКОЛ
                 </Button>
@@ -118,28 +154,30 @@ export default function HomePage() {
 
           {/* Connection Animation */}
           {isConnecting && (
-            <div className="text-center space-y-4">
-              <div className="font-mono text-retro-accent">
-                <TypingAnimation 
-                  text="Connecting to Noosphere..."
-                  speed={80}
-                />
-              </div>
-              <div className="font-mono text-retro-primary text-sm">
-                <TypingAnimation 
-                  text="Scanning temporal matrices... 47%"
-                  speed={60}
-                />
-              </div>
-              <div className="flex justify-center">
-                <div className="w-64 h-2 bg-retro-surface rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-gradient-to-r from-retro-accent to-retro-primary animate-pulse"
-                    style={{ width: '47%' }}
+            <GlitchEffect trigger={glitchTrigger} intensity="low">
+              <div className="text-center space-y-4">
+                <div className="font-mono text-retro-accent terminal-flicker">
+                  <TypingAnimation 
+                    text="Connecting to Noosphere..."
+                    speed={80}
                   />
                 </div>
+                <div className="font-mono text-retro-primary text-sm">
+                  <TypingAnimation 
+                    text="Scanning temporal matrices... 47%"
+                    speed={60}
+                  />
+                </div>
+                <div className="flex justify-center">
+                  <div className="w-64 h-2 bg-retro-surface rounded-full overflow-hidden terminal-glow">
+                    <div 
+                      className="h-full bg-gradient-to-r from-retro-accent to-retro-primary animate-pulse"
+                      style={{ width: '47%' }}
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
+            </GlitchEffect>
           )}
 
           {/* Result Display */}
@@ -154,7 +192,7 @@ export default function HomePage() {
                 <Button 
                   onClick={handleReset}
                   variant="secondary"
-                  className="px-6 py-2 font-mono"
+                  className="px-6 py-2 font-mono hover:shadow-retro-accent/30 transition-all duration-300"
                 >
                   НОВИЙ ЗАПИТ
                 </Button>
