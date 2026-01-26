@@ -8,6 +8,8 @@ import { ScanLines } from '@/components/Terminal/ScanLines'
 import { GlitchEffect } from '@/components/Terminal/GlitchEffect'
 import { SoundIndicator } from '@/components/Terminal/SoundIndicator'
 import { ResultCard } from '@/components/ResultCard'
+// 👇 Імпорт нового компоненту
+import { SciFiBackground } from '@/components/Terminal/SciFiBackground'
 
 export default function HomePage() {
   const [input, setInput] = useState('')
@@ -19,7 +21,6 @@ export default function HomePage() {
   const [soundActive, setSoundActive] = useState(false)
 
   const parseInput = (inputStr: string) => {
-    // Simple parsing for "DD.MM.YYYY, City" format
     const parts = inputStr.split(',').map(p => p.trim())
     return {
       date: parts[0] || '',
@@ -45,7 +46,6 @@ export default function HomePage() {
       triggerSound('connection')
       triggerGlitch()
       
-      // Simulate connection process with random glitches
       const glitchInterval = setInterval(() => {
         if (Math.random() > 0.7) triggerGlitch()
       }, 500)
@@ -67,64 +67,47 @@ export default function HomePage() {
   }
 
   return (
-    <main className="relative min-h-dvh bg-black overflow-hidden crt-effect">
-      {/* Sound indicator */}
-      <SoundIndicator 
-        type="connection" 
-        active={soundActive}
-      />
-      
-      {/* Scan lines effect */}
+    <main className="relative min-h-dvh bg-black overflow-hidden crt-effect selection:bg-retro-primary selection:text-black">
+      <SoundIndicator type="connection" active={soundActive} />
       <ScanLines intensity="low" />
       
-      {/* Background grid pattern */}
-      <div 
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px)
-          `,
-          backgroundSize: '20px 20px'
-        }}
-      />
+      {/* 👇 ТУТ ТЕПЕР ЖИВЕ НАША НАУКОВА МАГІЯ 👇 */}
+      <SciFiBackground />
 
       <div className="relative z-20 flex flex-col items-center justify-center min-h-dvh p-4">
         <div className="w-full max-w-2xl space-y-8">
           
-          {/* Terminal Header */}
           <GlitchEffect trigger={glitchTrigger} intensity="medium">
             <div className="text-center space-y-4">
-              <div className="font-mono text-green-400 text-sm">
+              <div className="font-mono text-green-400 text-[10px] md:text-sm tracking-widest opacity-70">
                 {!showWelcome ? (
                   <TypingAnimation 
-                    text="RETROGRADE TEMPORAL INTERFACE v2.1.4"
-                    speed={30}
+                    text="RETROGRADE TEMPORAL INTERFACE v2.1.4 // LOADING CORE..."
+                    speed={20}
                     onComplete={() => setShowWelcome(true)}
                   />
                 ) : (
                   <span className={isConnecting ? 'terminal-flicker' : ''}>
-                    RETROGRADE TEMPORAL INTERFACE v2.1.4
+                    RETROGRADE TEMPORAL INTERFACE v2.1.4 // SYSTEM READY
                   </span>
                 )}
               </div>
               
               {showWelcome && !showResult && (
-                <div className="space-y-2">
-                  <h1 className="text-4xl md:text-6xl font-mono font-bold text-amber-500">
+                <div className="space-y-2 mix-blend-screen">
+                  <h1 className="text-4xl md:text-6xl font-serif font-bold text-amber-500 tracking-tight">
                     RETROGRADE
                   </h1>
-                  <p className="text-gray-300 font-mono text-sm">
-                    Введіть дату та місце для аналізу темпоральних аномалій
+                  <p className="text-zinc-400 font-mono text-xs uppercase tracking-[0.2em]">
+                     Department of Celestial Bureaucracy
                   </p>
                 </div>
               )}
             </div>
           </GlitchEffect>
 
-          {/* Terminal Input Section */}
           {showWelcome && !isConnecting && !showResult && (
-            <div className="space-y-6">
+            <div className="space-y-6 backdrop-blur-sm bg-black/20 p-6 rounded border border-zinc-900/50">
               <TerminalInput
                 placeholder="root@retrograde:~$ "
                 value={input}
@@ -140,49 +123,42 @@ export default function HomePage() {
                 <Button 
                   onClick={handleSubmit}
                   disabled={!input.trim()}
-                  className="px-8 py-3 text-lg font-mono hover:shadow-retro-primary/50 transition-all duration-300"
+                  className="w-full md:w-auto px-12 py-4 text-sm font-mono tracking-[0.2em] hover:shadow-[0_0_20px_rgba(255,176,0,0.3)] transition-all duration-300 border-retro-primary/30"
                 >
-                  ІНІЦІЮВАТИ ПРОТОКОЛ
+                  [ INITIATE PROTOCOL ]
                 </Button>
               </div>
               
-              <div className="text-center text-gray-400 font-mono text-xs">
-                Формат: DD.MM.YYYY, Місто (наприклад: 24.08.1991, Київ)
+              <div className="flex justify-between text-[10px] font-mono text-zinc-600 uppercase">
+                <span>Format: DD.MM.YYYY, CITY</span>
+                <span>SECURE: SSL/TLS</span>
               </div>
             </div>
           )}
 
-          {/* Connection Animation */}
           {isConnecting && (
             <GlitchEffect trigger={glitchTrigger} intensity="low">
-              <div className="text-center space-y-4">
-                <div className="font-mono text-green-400 terminal-flicker">
-                  <TypingAnimation 
-                    text="Connecting to Noosphere..."
-                    speed={80}
-                  />
+              <div className="text-center space-y-6">
+                <div className="font-mono text-green-500 terminal-flicker text-xs">
+                  <TypingAnimation text=">>> CONNECTING TO NOOSPHERE..." speed={50} />
                 </div>
-                <div className="font-mono text-amber-500 text-sm">
-                  <TypingAnimation 
-                    text="Scanning temporal matrices... 47%"
-                    speed={60}
-                  />
+                
+                {/* Loader Style Update */}
+                <div className="w-full h-1 bg-zinc-900 overflow-hidden">
+                    <div className="h-full bg-retro-primary w-1/2 animate-[scanline_2s_linear_infinite]"/>
                 </div>
-                <div className="flex justify-center">
-                  <div className="w-64 h-2 bg-gray-800 rounded-full overflow-hidden terminal-glow">
-                    <div 
-                      className="h-full bg-gradient-to-r from-green-400 to-amber-500 animate-pulse"
-                      style={{ width: '47%' }}
-                    />
-                  </div>
+
+                <div className="font-mono text-amber-500/80 text-[10px] space-y-1 text-left pl-20 border-l border-amber-900/30">
+                  <div className="opacity-50">Parsing star charts... OK</div>
+                  <div className="opacity-70">Calculating karmic debt... OVERFLOW</div>
+                  <div className="opacity-100 animate-pulse">Generating verdict...</div>
                 </div>
               </div>
             </GlitchEffect>
           )}
 
-          {/* Result Display */}
           {showResult && (
-            <div className="space-y-6">
+            <div className="space-y-8 animate-in fade-in zoom-in duration-500">
               <ResultCard 
                 date={queryData.date}
                 location={queryData.location}
@@ -192,9 +168,9 @@ export default function HomePage() {
                 <Button 
                   onClick={handleReset}
                   variant="secondary"
-                  className="px-6 py-2 font-mono hover:shadow-retro-accent/30 transition-all duration-300"
+                  className="text-xs tracking-[0.2em] border-zinc-700 hover:border-retro-text hover:bg-white/5"
                 >
-                  НОВИЙ ЗАПИТ
+                  &lt; NEW_QUERY /&gt;
                 </Button>
               </div>
             </div>
