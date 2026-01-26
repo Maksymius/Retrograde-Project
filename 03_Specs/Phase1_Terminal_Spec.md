@@ -20,14 +20,14 @@
 - [x] Імплементувати terminal typing анімацію
 - [x] Додати cursor blink ефект
 
-### 3. Login Screen Layout
-- [ ] Створити головну сторінку `/`
-- [ ] Верстка terminal container з `h-dvh` (Dynamic Viewport Height)
-- [ ] Реалізувати Input Mask для дати (DD.MM.YYYY) - текстове введення
-- [ ] Поле вводу з placeholder "root@retrograde:~$ "
-- [ ] Кнопка "ІНІЦІЮВАТИ ПРОТОКОЛ"
-- [ ] Анімація "Connecting to Noosphere..."
-- [ ] Responsive дизайн для мобільних
+### 3. Login Screen Layout ✅
+- [x] Створити головну сторінку `/`
+- [x] Верстка terminal container з `h-dvh` (Dynamic Viewport Height)
+- [x] Реалізувати Input Mask для дати (DD.MM.YYYY) - текстове введення
+- [x] Поле вводу з placeholder "root@retrograde:~$ "
+- [x] Кнопка "ІНІЦІЮВАТИ ПРОТОКОЛ"
+- [x] Анімація "Connecting to Noosphere..."
+- [x] Responsive дизайн для мобільних
 
 ### 4. Static Result Card
 - [ ] Створити компонент ResultCard
