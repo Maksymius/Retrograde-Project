@@ -22,8 +22,7 @@ export function ResultCard({ date, location }: ResultCardProps) {
   useEffect(() => {
     const t1 = setTimeout(() => setStage(1), 500)
     const t2 = setTimeout(() => setStage(2), 1500)
-    const t3 = setTimeout(() => setStage(3), 4500) // Довша затримка перед штампом
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
+    return () => { clearTimeout(t1); clearTimeout(t2) }
   }, [])
 
   return (
@@ -104,7 +103,10 @@ export function ResultCard({ date, location }: ResultCardProps) {
                   <TypingAnimation 
                     text={mockData.verdict} 
                     speed={20} 
-                    onComplete={() => setStage(3)} 
+                    onComplete={() => {
+                      // Затримка 1 секунда перед штампом
+                      setTimeout(() => setStage(3), 1000)
+                    }} 
                   />
                   {stage === 2 && <span className="inline-block w-2 h-4 ml-1 bg-purple-500 animate-pulse align-middle"/>}
                 </div>
