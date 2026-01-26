@@ -10,14 +10,18 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
+    
 # 4. КОПІЮЄМО З УРАХУВАННЯМ ПАПКИ backend (Monorepo setup)
 # Оскільки контекст — корінь репозиторію
+# Тепер це правильно, оскільки Cloud Build використовує `backend` як кореневий контекст.
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 5. Копіюємо код бекенду в папку app
-COPY backend/app/ ./app/
-COPY backend/run_bot.py .
+# Тепер це правильно, оскільки `app/` знаходиться безпосередньо в контексті `backend`.
+COPY app/ ./app/
+# Тепер це правильно, оскільки `run_bot.py` знаходиться безпосередньо в контексті `backend`.
+COPY run_bot.py .
 
 # 6. ВИДАЛЯЄМО ХАРДКОД ПОРТУ 8000
 # Не встановлюй ENV PORT, Гугл сам його надасть.
@@ -25,6 +29,6 @@ COPY backend/run_bot.py .
 EXPOSE 8080
 
 # 7. ЗАПУСК (Використовуємо динамічний порт)
-# Важливо: використовуємо подвійні лапки і $PORT без фігурних дужок 
+# Важливо: використовуємо подвійні лапки і $PORT без фігурних дужок
 # або через shell-формат, щоб uvicorn його підхопив
 CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
