@@ -90,12 +90,16 @@ export default function HomePage() {
       }, 500)
       
       try {
+        // Get API URL from environment or use localhost for development
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
+        
         console.log('🚀 Making API request to backend...')
+        console.log('🌐 API URL:', API_URL)
         console.log('📍 Location:', parsed.location)
         console.log('📅 Date:', parsed.date)
         
         // Call our backend API
-        const response = await fetch('http://localhost:8000/api/predict', {
+        const response = await fetch(`${API_URL}/api/predict`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
