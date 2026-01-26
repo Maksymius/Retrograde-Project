@@ -25,9 +25,45 @@ export default function HomePage() {
 
   const parseInput = (inputStr: string) => {
     const parts = inputStr.split(',').map(p => p.trim())
+    
+    // Try to detect which part is date and which is location
+    let date = ''
+    let location = ''
+    
+    for (const part of parts) {
+      // Check if part looks like a date (contains digits and dots/dashes)
+      if (/\d{1,2}[.\-/]\d{1,2}[.\-/]\d{4}/.test(part)) {
+        // Convert to YYYY-MM-DD format
+        const dateMatch = part.match(/(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})/)
+        if (dateMatch) {
+          const [, day, month, year] = dateMatch
+          date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+        }
+      } else if (part && !date) {
+        // If no date found yet and this part doesn't look like a date, it's probably location
+        location = part
+      } else if (part && !location) {
+        // If we have date but no location, this is location
+        location = part
+      }
+    }
+    
+    // Fallback: if we couldn't parse properly, assume first is location, second is date
+    if (!date && !location && parts.length >= 2) {
+      location = parts[0]
+      const dateStr = parts[1]
+      const dateMatch = dateStr.match(/(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})/)
+      if (dateMatch) {
+        const [, day, month, year] = dateMatch
+        date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      }
+    }
+    
+    console.log('🔍 Parsed input:', { original: inputStr, date, location })
+    
     return {
-      date: parts[0] || '',
-      location: parts[1] || 'Unknown Location'
+      date: date || '1991-08-24', // fallback date
+      location: location || 'Unknown Location'
     }
   }
 
@@ -54,6 +90,10 @@ export default function HomePage() {
       }, 500)
       
       try {
+        console.log('🚀 Making API request to backend...')
+        console.log('📍 Location:', parsed.location)
+        console.log('📅 Date:', parsed.date)
+        
         // Call our backend API
         const response = await fetch('http://localhost:8000/api/predict', {
           method: 'POST',
@@ -66,11 +106,16 @@ export default function HomePage() {
           })
         })
         
+        console.log('📡 Response status:', response.status)
+        console.log('📡 Response headers:', response.headers)
+        
         if (!response.ok) {
+          console.error('❌ HTTP Error:', response.status, response.statusText)
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         
         const data = await response.json()
+        console.log('✅ API Response received:', data)
         
         // Store the API response for ResultCard
         setQueryData({
@@ -84,7 +129,16 @@ export default function HomePage() {
         triggerSound('beep')
         
       } catch (error) {
-        console.error('API Error:', error)
+        console.error('❌ API Error Details:', error)
+        console.error('❌ Error type:', typeof error)
+        console.error('❌ Error message:', error instanceof Error ? error.message : 'Unknown error')
+        
+        // Check if it's a network error
+        if (error instanceof TypeError && error.message.includes('fetch')) {
+          console.error('🌐 Network Error: Cannot connect to backend API')
+          console.error('🔍 Check if backend is running on http://localhost:8000')
+        }
+        
         clearInterval(glitchInterval)
         
         // Fallback to mock data on error

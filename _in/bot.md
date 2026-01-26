@@ -23,3 +23,9 @@ GEMINI_API_KEY
 
 AIzaSyDh8OqxtweHq3wkERlaCBFFiYb2XLgev4M
 ```
+
+
+```
+24.08.1991, Kyiv
+
+```
