@@ -38,8 +38,6 @@ steps:
       - '--allow-unauthenticated'
       - '--set-env-vars'
       - 'GEMINI_API_KEY=${_GEMINI_API_KEY},FRONTEND_URL=${_FRONTEND_URL}'
-      - '--port'
-      - '8000'
 
 images:
   - 'gcr.io/$PROJECT_ID/retrograde-backend:$COMMIT_SHA'

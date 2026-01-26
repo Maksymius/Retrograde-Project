@@ -42,8 +42,8 @@ async def health_check():
     return {"status": "healthy", "service": "retrograde-oracle"}
 
 # Import our services
-from astrology import calculate_simple
-from ai_engine import generate_verdict, generate_location_error_verdict
+from .astrology import calculate_simple
+from .ai_engine import generate_verdict, generate_location_error_verdict
 
 # Main prediction endpoint
 @app.post("/api/predict", response_model=PredictionResponse)

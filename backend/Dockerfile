@@ -1,34 +1,34 @@
-# 1. Використовуємо slim образ
+# Use Python slim image
 FROM python:3.11-slim
 
-# 2. Робоча папка всередині контейнера
+# Set working directory
 WORKDIR /app
 
-# 3. Встановлюємо залежності для астрологічної ліби (gcc, g++)
+# Install system dependencies for kerykeion (Swiss Ephemeris)
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-    
-# 4. КОПІЮЄМО З УРАХУВАННЯМ ПАПКИ backend (Monorepo setup)
-# Оскільки контекст — корінь репозиторію
-# Тепер це правильно, оскільки Cloud Build використовує `backend` як кореневий контекст.
+# Copy requirements first for better caching
 COPY requirements.txt .
+
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Копіюємо код бекенду в папку app
-# Тепер це правильно, оскільки `app/` знаходиться безпосередньо в контексті `backend`.
+# Copy application code
 COPY app/ ./app/
-# Тепер це правильно, оскільки `run_bot.py` знаходиться безпосередньо в контексті `backend`.
 COPY run_bot.py .
+COPY start.sh .
 
-# 6. ВИДАЛЯЄМО ХАРДКОД ПОРТУ 8000
-# Не встановлюй ENV PORT, Гугл сам його надасть.
-# EXPOSE теж не обов'язковий, але якщо хочеш — став 8080.
+# Make start script executable
+RUN chmod +x start.sh
+
+# Expose port (Cloud Run will override with PORT env variable)
 EXPOSE 8080
 
-# 7. ЗАПУСК (Використовуємо динамічний порт)
-# Важливо: використовуємо подвійні лапки і $PORT без фігурних дужок
-# або через shell-формат, щоб uvicorn його підхопив
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# Set default PORT for local development
+ENV PORT=8000
+
+# Run the application using start script
+CMD ["./start.sh"]
