@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/Button'
 import { TerminalInput } from '@/components/Terminal/TerminalInput'
 import { TypingAnimation } from '@/components/Terminal/TypingAnimation'
-import { ScanLines } from '@/components/Terminal/ScanLines'
 import { GlitchEffect } from '@/components/Terminal/GlitchEffect'
 import { SoundIndicator } from '@/components/Terminal/SoundIndicator'
 import { ResultCard } from '@/components/ResultCard'
@@ -69,7 +68,6 @@ export default function HomePage() {
   return (
     <main className="relative min-h-dvh bg-black overflow-hidden crt-effect selection:bg-retro-primary selection:text-black">
       <SoundIndicator type="connection" active={soundActive} />
-      <ScanLines intensity="low" />
       
       {/* 👇 ТУТ ТЕПЕР ЖИВЕ НАША НАУКОВА МАГІЯ 👇 */}
       <SciFiBackground />

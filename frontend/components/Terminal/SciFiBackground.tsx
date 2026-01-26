@@ -24,13 +24,13 @@ export const SciFiBackground = () => {
       
       {/* 1. Космічна сітка з паралаксом */}
       <div 
-        className="absolute inset-0 opacity-[0.02]"
+        className="absolute inset-0 opacity-[0.05]"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(0, 255, 65, 0.3) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 65, 0.3) 1px, transparent 1px),
-            radial-gradient(circle at 25% 25%, rgba(255, 176, 0, 0.1) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, rgba(255, 176, 0, 0.1) 1px, transparent 1px)
+            linear-gradient(rgba(0, 255, 65, 0.4) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 65, 0.4) 1px, transparent 1px),
+            radial-gradient(circle at 25% 25%, rgba(255, 176, 0, 0.2) 1px, transparent 1px),
+            radial-gradient(circle at 75% 75%, rgba(255, 176, 0, 0.2) 1px, transparent 1px)
           `,
           backgroundSize: '60px 60px, 60px 60px, 120px 120px, 180px 180px'
         }}
@@ -46,7 +46,7 @@ export const SciFiBackground = () => {
       </div>
 
       {/* 3. Орбітальні кільця (Планетарна система) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vmax] h-[200vmax] opacity-5">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vmax] h-[200vmax] opacity-20">
         <svg viewBox="0 0 1000 1000" className="w-full h-full animate-[spin_120s_linear_infinite]">
           {/* Зовнішня орбіта */}
           <circle cx="500" cy="500" r="480" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 15" className="text-retro-accent" />
@@ -56,19 +56,19 @@ export const SciFiBackground = () => {
           <circle cx="500" cy="500" r="280" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 8" className="text-zinc-500" />
           
           {/* Планети на орбітах */}
-          <circle cx="980" cy="500" r="3" fill="currentColor" className="text-retro-accent animate-pulse" />
-          <circle cx="880" cy="500" r="2" fill="currentColor" className="text-retro-primary" />
-          <circle cx="780" cy="500" r="1.5" fill="currentColor" className="text-zinc-400" />
+          <circle cx="980" cy="500" r="4" fill="currentColor" className="text-retro-accent animate-pulse" />
+          <circle cx="880" cy="500" r="3" fill="currentColor" className="text-retro-primary" />
+          <circle cx="780" cy="500" r="2" fill="currentColor" className="text-zinc-400" />
           
           {/* Сатурн з кільцями */}
           <g transform="translate(680, 500)">
-            <circle cx="0" cy="0" r="4" fill="currentColor" className="text-amber-600" />
-            <ellipse cx="0" cy="0" rx="8" ry="2" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-amber-600/50" />
-            <ellipse cx="0" cy="0" rx="10" ry="2.5" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-amber-600/30" />
+            <circle cx="0" cy="0" r="6" fill="currentColor" className="text-amber-500" />
+            <ellipse cx="0" cy="0" rx="12" ry="3" fill="none" stroke="currentColor" strokeWidth="1" className="text-amber-400" />
+            <ellipse cx="0" cy="0" rx="15" ry="4" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-amber-300" />
           </g>
           
           {/* Червона блимаюча крапка (тривожний сигнал) */}
-          <circle cx="580" cy="500" r="2" fill="currentColor" className="text-red-500 animate-ping" />
+          <circle cx="580" cy="500" r="3" fill="currentColor" className="text-red-500 animate-ping" />
         </svg>
       </div>
 
@@ -133,15 +133,15 @@ export const SciFiBackground = () => {
 
       {/* 9. Scan Lines ефект (як на старих CRT моніторах) */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-[0.08]"
         style={{
           backgroundImage: `
             repeating-linear-gradient(
               0deg,
               transparent,
               transparent 2px,
-              rgba(0, 255, 65, 0.1) 2px,
-              rgba(0, 255, 65, 0.1) 4px
+              rgba(0, 255, 65, 0.3) 2px,
+              rgba(0, 255, 65, 0.3) 4px
             )
           `,
           animation: 'scanline 8s linear infinite'
