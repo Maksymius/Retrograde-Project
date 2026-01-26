@@ -32,7 +32,21 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
     Returns structured response with verdict, entropy, case_id.
     """
     try:
-        model = genai.GenerativeModel('gemini-1.5-pro')
+        # Try available model names in order of preference
+        model_names = ['gemini-2.5-flash', 'gemini-pro-latest', 'gemini-2.5-pro']
+        
+        model = None
+        for model_name in model_names:
+            try:
+                model = genai.GenerativeModel(model_name)
+                print(f"Using model: {model_name}")
+                break
+            except Exception as e:
+                print(f"Failed to load model {model_name}: {e}")
+                continue
+        
+        if not model:
+            raise Exception("No available Gemini models found")
         
         # Prepare prompt with astral data
         user_prompt = f"""
@@ -50,6 +64,7 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
         
         # Parse JSON response
         response_text = response.text.strip()
+        print(f"Raw AI response: {response_text}")
         
         # Clean up response (remove markdown formatting if present)
         if response_text.startswith("```json"):
