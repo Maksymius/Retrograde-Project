@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-retro-bg text-retro-text font-sans;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Terminal cursor */
+.cursor::after {
+  content: '|';
+  @apply animate-blink text-retro-accent;
+}
+
+/* Scan lines effect */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent 50%,
+    rgba(0, 255, 65, 0.03) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Terminal glow effect */
+.terminal-glow {
+  box-shadow: 
+    0 0 20px rgba(0, 255, 65, 0.3),
+    inset 0 0 20px rgba(0, 255, 65, 0.1);
+}
+
+/* Terminal input styles */
+.terminal-input {
+  @apply bg-retro-surface/50 border border-retro-accent text-retro-accent font-mono;
+  @apply placeholder:text-retro-accent/60 focus:ring-retro-accent;
+  @apply backdrop-blur-sm terminal-glow;
+}
+
+/* Terminal button styles */
+.terminal-button {
+  @apply bg-retro-primary text-retro-bg border-retro-primary font-mono font-medium;
+  @apply hover:bg-retro-primary/90 focus:ring-retro-primary;
+  @apply shadow-lg shadow-retro-primary/25 transition-all duration-200;
 }
