@@ -20,8 +20,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app/ ./app/
 COPY run_bot.py .
 
-# Expose port
+# Expose port (Cloud Run will set PORT env variable)
 EXPOSE 8000
 
+# Use environment variable for port (Cloud Run compatibility)
+ENV PORT=8000
+
 # Default command (can be overridden in docker-compose)
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT}

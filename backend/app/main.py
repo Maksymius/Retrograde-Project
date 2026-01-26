@@ -10,12 +10,14 @@ load_dotenv()
 
 app = FastAPI(title="Retrograde Department API", version="1.0.0")
 
-# CORS setup
+# CORS setup - allow frontend origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # Next.js dev
-        os.getenv("FRONTEND_URL", "http://localhost:3000")
+        "https://retrograde-project.vercel.app",  # Production frontend
+        os.getenv("FRONTEND_URL", "http://localhost:3000"),
+        "*"  # Allow all origins for now (remove in production if needed)
     ],
     allow_credentials=True,
     allow_methods=["*"],
