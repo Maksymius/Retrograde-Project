@@ -22,7 +22,8 @@ export function ResultCard({ date, location }: ResultCardProps) {
   useEffect(() => {
     const t1 = setTimeout(() => setStage(1), 500)
     const t2 = setTimeout(() => setStage(2), 1500)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
+    const t3 = setTimeout(() => setStage(3), 4500) // Довша затримка перед штампом
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3) }
   }, [])
 
   return (
@@ -112,17 +113,16 @@ export function ResultCard({ date, location }: ResultCardProps) {
             
             {/* 3. ШТАМП (Виправлений) */}
             {stage >= 3 && (
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-50 overflow-hidden">
+              <div className="absolute bottom-4 right-4 pointer-events-none z-50">
                 <div className="
                   relative
-                  border-[8px] border-red-600 
-                  text-red-600 font-black text-6xl 
-                  px-8 py-4
+                  border-[4px] border-red-600 
+                  text-red-600 font-black text-2xl 
+                  px-3 py-2
                   tracking-widest uppercase
-                  opacity-0 
                   animate-stamp 
                   bg-red-950/20 backdrop-blur-[2px]
-                  shadow-[0_0_50px_rgba(220,38,38,0.4)]
+                  shadow-[0_0_30px_rgba(220,38,38,0.4)]
                   rotate-[-12deg]
                 ">
                   <span className="relative z-10">REJECTED</span>
