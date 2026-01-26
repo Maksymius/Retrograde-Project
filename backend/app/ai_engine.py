@@ -1,10 +1,20 @@
 import google.generativeai as genai
 import json
 import os
+import logging
 from typing import Dict, Optional
 
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Configure Gemini
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    logger.error("❌ GEMINI_API_KEY not found in environment variables!")
+else:
+    logger.info(f"✅ GEMINI_API_KEY found (length: {len(api_key)})")
+    genai.configure(api_key=api_key)
 
 SYSTEM_PROMPT = """
 Ти — ШІ-Оракул Департаменту Ретроградності. Твоя робота — не втішати, а констатувати факти.
@@ -31,6 +41,8 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
     Generate AI verdict based on astrology data.
     Returns structured response with verdict, entropy, case_id.
     """
+    logger.info(f"🔮 Generating verdict for astral data: {astral_data}")
+    
     try:
         # Try available model names in order of preference
         model_names = ['gemini-2.5-flash', 'gemini-pro-latest', 'gemini-2.5-pro']
@@ -39,13 +51,14 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
         for model_name in model_names:
             try:
                 model = genai.GenerativeModel(model_name)
-                print(f"Using model: {model_name}")
+                logger.info(f"✅ Using model: {model_name}")
                 break
             except Exception as e:
-                print(f"Failed to load model {model_name}: {e}")
+                logger.warning(f"⚠️ Failed to load model {model_name}: {e}")
                 continue
         
         if not model:
+            logger.error("❌ No available Gemini models found")
             raise Exception("No available Gemini models found")
         
         # Prepare prompt with astral data
@@ -56,6 +69,8 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
         Згенеруй вирок Департаменту Ретроградності для цих планетарних позицій.
         """
         
+        logger.info("🤖 Calling Gemini API...")
+        
         # Generate response
         response = model.generate_content([
             {"role": "user", "parts": [SYSTEM_PROMPT]},
@@ -64,7 +79,7 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
         
         # Parse JSON response
         response_text = response.text.strip()
-        print(f"Raw AI response: {response_text}")
+        logger.info(f"📝 Raw AI response: {response_text[:200]}...")
         
         # Clean up response (remove markdown formatting if present)
         if response_text.startswith("```json"):
@@ -76,21 +91,24 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
         required_fields = ["verdict", "entropy", "case_id"]
         for field in required_fields:
             if field not in verdict_data:
+                logger.error(f"❌ Missing required field: {field}")
                 raise Exception(f"Missing required field: {field}")
         
+        logger.info(f"✅ Verdict generated successfully: {verdict_data['case_id']}")
         return verdict_data
         
     except json.JSONDecodeError as e:
-        print(f"JSON parsing error: {e}")
+        logger.error(f"❌ JSON parsing error: {e}")
         return generate_fallback_verdict(astral_data)
     except Exception as e:
-        print(f"AI generation error: {e}")
+        logger.error(f"❌ AI generation error: {e}")
         return generate_fallback_verdict(astral_data)
 
 def generate_fallback_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
     """
     Fallback verdict when AI is unavailable.
     """
+    logger.warning(f"⚠️ Using fallback verdict for {astral_data.get('Sun', 'UNKNOWN')}")
     sun_sign = astral_data.get('Sun', 'UNKNOWN')
     
     fallback_verdicts = {
