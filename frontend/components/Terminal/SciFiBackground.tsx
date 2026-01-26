@@ -3,17 +3,18 @@
 import { useEffect, useState } from 'react'
 
 export const SciFiBackground = () => {
-  // Генеруємо рандомні числа для "живого" інтерфейсу
+  // Стейт для живої анімації чисел та глітчів тексту
   const [randomVal, setRandomVal] = useState("00.00")
-  const [glitchText, setGlitchText] = useState("NORMAL")
+  const [glitchText, setGlitchText] = useState("STABLE")
 
   useEffect(() => {
     const interval = setInterval(() => {
       setRandomVal((Math.random() * 100).toFixed(2))
-      // Іноді глітчимо статус
-      if (Math.random() > 0.8) {
-        setGlitchText(Math.random() > 0.5 ? "ANOMALY" : "ERROR_404")
-        setTimeout(() => setGlitchText("NORMAL"), 500)
+      
+      // Рандомний глітч статусу
+      if (Math.random() > 0.85) {
+        setGlitchText(Math.random() > 0.5 ? "ANOMALY" : "404_FATE")
+        setTimeout(() => setGlitchText("STABLE"), 300)
       }
     }, 2000)
     return () => clearInterval(interval)
@@ -22,129 +23,90 @@ export const SciFiBackground = () => {
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
       
-      {/* 1. Космічна сітка з паралаксом */}
+      {/* 1. ГЛИБИНА: Комбінована сітка (Радіальна + Лінійна) */}
       <div 
-        className="absolute inset-0 opacity-[0.05]"
+        className="absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(0, 255, 65, 0.4) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0, 255, 65, 0.4) 1px, transparent 1px),
-            radial-gradient(circle at 25% 25%, rgba(255, 176, 0, 0.2) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, rgba(255, 176, 0, 0.2) 1px, transparent 1px)
+            linear-gradient(rgba(0, 255, 65, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 255, 65, 0.3) 1px, transparent 1px),
+            radial-gradient(circle at 50% 50%, rgba(255, 176, 0, 0.15) 1px, transparent 1px)
           `,
-          backgroundSize: '60px 60px, 60px 60px, 120px 120px, 180px 180px'
+          backgroundSize: '40px 40px, 40px 40px, 80px 80px'
         }}
       />
 
-      {/* 2. Центральний прицільний хрест */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-        <div className="relative w-20 h-20">
-          <div className="absolute top-1/2 left-0 w-full h-px bg-retro-accent/30" />
-          <div className="absolute top-0 left-1/2 h-full w-px bg-retro-accent/30" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 border border-retro-accent/50 rounded-full animate-pulse" />
-        </div>
-      </div>
-
-      {/* 3. Орбітальні кільця (Планетарна система) */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200vmax] h-[200vmax] opacity-20">
+      {/* 2. ЦЕНТРАЛЬНИЙ МЕХАНІЗМ (Сатурн + Ілюмінати) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140vmax] h-[140vmax] opacity-15">
         <svg viewBox="0 0 1000 1000" className="w-full h-full animate-[spin_120s_linear_infinite]">
-          {/* Зовнішня орбіта */}
-          <circle cx="500" cy="500" r="480" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="5 15" className="text-retro-accent" />
-          {/* Середня орбіта */}
-          <circle cx="500" cy="500" r="380" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-retro-primary" />
-          {/* Внутрішня орбіта */}
-          <circle cx="500" cy="500" r="280" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 8" className="text-zinc-500" />
           
-          {/* Планети на орбітах */}
-          <circle cx="980" cy="500" r="4" fill="currentColor" className="text-retro-accent animate-pulse" />
-          <circle cx="880" cy="500" r="3" fill="currentColor" className="text-retro-primary" />
-          <circle cx="780" cy="500" r="2" fill="currentColor" className="text-zinc-400" />
+          {/* Зовнішнє кільце */}
+          <circle cx="500" cy="500" r="450" fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="10 20" className="text-zinc-600" />
           
-          {/* Сатурн з кільцями */}
-          <g transform="translate(680, 500)">
-            <circle cx="0" cy="0" r="6" fill="currentColor" className="text-amber-500" />
-            <ellipse cx="0" cy="0" rx="12" ry="3" fill="none" stroke="currentColor" strokeWidth="1" className="text-amber-400" />
-            <ellipse cx="0" cy="0" rx="15" ry="4" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-amber-300" />
+          {/* Середнє кільце (Орбіта Сатурна) */}
+          <circle cx="500" cy="500" r="350" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-zinc-500" />
+          
+          {/* Сатурн (літає по колу) */}
+          <g transform="translate(850, 500)">
+            <circle cx="0" cy="0" r="8" fill="currentColor" className="text-amber-600/80" />
+            <ellipse cx="0" cy="0" rx="14" ry="4" fill="none" stroke="currentColor" strokeWidth="1" className="text-amber-500/80" />
           </g>
-          
-          {/* Червона блимаюча крапка (тривожний сигнал) */}
-          <circle cx="580" cy="500" r="3" fill="currentColor" className="text-red-500 animate-ping" />
+
+          {/* Внутрішній Трикутник ("Всевидяче око") - пульсує */}
+          <polygon points="500,200 240,750 760,750" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-900 animate-[pulse_6s_ease-in-out_infinite]" />
         </svg>
       </div>
 
-      {/* 4. Контр-обертання з геометрією */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[100vmax] h-[100vmax] opacity-8">
+      {/* 3. КОНТР-ОРБІТА (Для динаміки) */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vmax] h-[90vmax] opacity-10">
          <svg viewBox="0 0 1000 1000" className="w-full h-full animate-[spin_80s_linear_infinite_reverse]">
-          {/* Еліптична орбіта */}
-          <ellipse cx="500" cy="500" rx="450" ry="200" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-purple-900/50" transform="rotate(30 500 500)" />
-          {/* Трикутник навігації */}
-          <polygon points="500,100 350,400 650,400" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-retro-accent/30" />
-          {/* Супутник */}
-          <circle cx="950" cy="500" r="8" fill="none" stroke="currentColor" strokeWidth="1" className="text-retro-primary/50 animate-ping" />
+          <ellipse cx="500" cy="500" rx="400" ry="150" fill="none" stroke="currentColor" strokeWidth="0.5" className="text-zinc-500" transform="rotate(45 500 500)" />
+          {/* Маленький супутник */}
+          <circle cx="900" cy="500" r="4" fill="currentColor" className="text-green-500/50 animate-ping" />
         </svg>
       </div>
 
-      {/* 5. Технічні дані (Абсурдні, але стильні) */}
-      <div className="absolute top-8 right-8 font-mono text-[9px] text-zinc-700 text-right space-y-1 leading-tight">
-        <div className="text-retro-accent/50">◉ SECTOR: Ω-7G</div>
-        <div>ENTROPY: {randomVal}%</div>
-        <div className={`transition-colors duration-200 ${glitchText !== "NORMAL" ? "text-red-500 animate-pulse" : ""}`}>
-          STATUS: {glitchText}
+      {/* 4. ДАНІ: Верхній правий кут (Глітч-статус) */}
+      <div className="absolute top-8 right-8 font-mono text-[9px] text-zinc-600 text-right space-y-1">
+        <div>SECTOR: 7G-Ω</div>
+        <div>VECTOR: {randomVal}</div>
+        <div className={`${glitchText !== "STABLE" ? "text-red-500 animate-pulse font-bold" : "text-green-900"}`}>
+          SYS_STATUS: {glitchText}
         </div>
-        <div className="text-zinc-800">REALITY_CHECK: FAILED</div>
       </div>
 
-      <div className="absolute bottom-8 left-8 font-mono text-[9px] text-zinc-700 space-y-1 leading-tight">
-        <div className="text-purple-900/70">◢ TEMPORAL_DRIFT: ±∞</div>
-        <div>SCALE: 1:ABSURD</div>
-        <div className="text-zinc-800">LOGIC.EXE: NOT_FOUND</div>
+      {/* 5. ДАНІ: Нижній лівий кут ("Human Folly") */}
+      <div className="absolute bottom-8 left-8 font-mono text-[9px] text-zinc-600 space-y-1">
+        <div className="tracking-widest">FIG A.1: HUMAN FOLLY</div>
+        <div>SCALE: 1:∞</div>
+        <div className="opacity-50">ERROR_LOG_ENABLED</div>
       </div>
 
-      {/* 6. Кутові індикатори (Мінімалістичні) */}
-      <div className="absolute top-0 left-0 w-16 h-16">
-        <div className="absolute top-4 left-4 w-8 h-px bg-retro-accent/20" />
-        <div className="absolute top-4 left-4 w-px h-8 bg-retro-accent/20" />
-        <div className="absolute top-4 left-4 w-1 h-1 bg-retro-accent/40 rounded-full animate-pulse" />
+      {/* 6. РАМКИ: Округлені кути (Стиль "Дело №...") */}
+      <div className="absolute top-0 left-0 w-24 h-24 border-l border-t border-zinc-800 rounded-tl-3xl opacity-30" />
+      <div className="absolute bottom-0 right-0 w-24 h-24 border-r border-b border-zinc-800 rounded-br-3xl opacity-30" />
+
+      {/* 7. ГОНЗО-ФОРМУЛИ (Розкидані і ледь помітні) */}
+      <div className="absolute top-[20%] left-[15%] text-zinc-800 text-[10px] font-serif italic opacity-30 animate-pulse duration-[4s]">
+        f(x) = ∑ (regret)²
       </div>
-      
-      <div className="absolute bottom-0 right-0 w-16 h-16">
-        <div className="absolute bottom-4 right-4 w-8 h-px bg-retro-primary/20" />
-        <div className="absolute bottom-4 right-4 w-px h-8 bg-retro-primary/20" />
-        <div className="absolute bottom-4 right-4 w-1 h-1 bg-retro-primary/40 rounded-full animate-pulse delay-500" />
+      <div className="absolute bottom-[30%] right-[15%] text-zinc-800 text-[10px] font-serif italic opacity-30 animate-pulse duration-[5s] delay-700">
+        Δt → 0
+      </div>
+      <div className="absolute top-[60%] left-[10%] text-zinc-800 text-[9px] font-mono opacity-20 animate-pulse duration-[7s] delay-1000">
+        √(-1) = reality
       </div>
 
-      {/* 7. Плаваючі формули (Абсурдна математика) */}
-      <div className="absolute top-1/3 left-1/5 text-zinc-800/30 text-[10px] font-mono opacity-40 animate-pulse">
-        ∫ regret dx = ∞
-      </div>
-      <div className="absolute bottom-1/4 right-1/5 text-zinc-800/30 text-[10px] font-mono opacity-40 animate-pulse delay-1000">
-        lim(hope→0) = ?
-      </div>
-      <div className="absolute top-2/3 left-1/2 -translate-x-1/2 text-zinc-800/20 text-[8px] font-mono opacity-30 animate-pulse delay-2000">
-        √(-1) = your_life
-      </div>
+      {/* 8. ЗІРКИ (Рідкісні спалахи) */}
+      <div className="absolute top-1/4 left-1/3 w-px h-px bg-white/20 animate-ping duration-[3s]" />
+      <div className="absolute bottom-1/3 right-1/4 w-px h-px bg-amber-500/30 animate-ping duration-[4s] delay-500" />
 
-      {/* 8. Дискретні зірки (Космічний пил) */}
-      <div className="absolute top-1/4 left-1/6 w-px h-px bg-retro-accent animate-ping" style={{ animationDelay: '0s' }} />
-      <div className="absolute top-1/3 right-1/4 w-px h-px bg-retro-primary animate-ping" style={{ animationDelay: '1s' }} />
-      <div className="absolute bottom-1/3 left-1/3 w-px h-px bg-zinc-400 animate-ping" style={{ animationDelay: '2s' }} />
-      <div className="absolute bottom-1/4 right-1/3 w-px h-px bg-retro-accent animate-ping" style={{ animationDelay: '3s' }} />
-      <div className="absolute top-1/5 left-2/3 w-px h-px bg-retro-primary animate-ping" style={{ animationDelay: '4s' }} />
-
-      {/* 9. Scan Lines ефект (як на старих CRT моніторах) */}
+      {/* 9. СКАН-ЛІНІЇ (Фінальний шар 80-х) */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-[0.08]"
+        className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
-          backgroundImage: `
-            repeating-linear-gradient(
-              0deg,
-              transparent,
-              transparent 2px,
-              rgba(0, 255, 65, 0.3) 2px,
-              rgba(0, 255, 65, 0.3) 4px
-            )
-          `,
-          animation: 'scanline 8s linear infinite'
+          backgroundImage: `repeating-linear-gradient(0deg, transparent, transparent 2px, #000 3px)`,
+          backgroundSize: '100% 4px'
         }}
       />
     </div>

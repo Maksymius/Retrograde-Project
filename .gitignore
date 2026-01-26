@@ -35,3 +35,4 @@ frontend/*.log
 
 # --- DOCKER ---
 .dockerignore
+.env
