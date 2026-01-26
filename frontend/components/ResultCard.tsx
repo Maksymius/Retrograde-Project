@@ -62,6 +62,26 @@ export function ResultCard({ date, location }: ResultCardProps) {
                <span className="text-[10px] text-zinc-500 uppercase">System Status</span>
                <span className="text-zinc-300">ONLINE</span>
             </div>
+            
+            {/* Наукові дані */}
+            <div className="flex flex-col border-l border-cyan-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Geo-Coordinates</span>
+              <span className="text-cyan-400 text-xs font-mono">{(Math.random() * 180 - 90).toFixed(4)}° / {(Math.random() * 360 - 180).toFixed(4)}°</span>
+            </div>
+            <div className="flex flex-col border-l border-cyan-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Azimuth Angle</span>
+              <span className="text-cyan-400 text-xs font-mono">{(Math.random() * 360).toFixed(2)}° ± 0.47°</span>
+            </div>
+            
+            <div className="flex flex-col border-l border-blue-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Declination</span>
+              <span className="text-blue-400 text-xs font-mono">{(Math.random() * 90 - 45).toFixed(3)}° (Solar)</span>
+            </div>
+            <div className="flex flex-col border-l border-blue-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Right Ascension</span>
+              <span className="text-blue-400 text-xs font-mono">{(Math.random() * 24).toFixed(2)}h {(Math.random() * 60).toFixed(0)}m</span>
+            </div>
+            
             <div className="flex flex-col border-l border-red-900/50 pl-3">
               <span className="text-[10px] text-zinc-500 uppercase">Entropy Level</span>
               <span className="text-red-500 font-bold tracking-wider">{mockData.entropyLevel}</span>

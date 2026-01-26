@@ -26,8 +26,7 @@ const config: Config = {
       animation: {
         "blink": "blink 1s step-end infinite",
         "scanline": "scanline 8s linear infinite",
-        // ОНОВЛЕНО: Більш "пружинна" анімація для реалістичного удару
-        "stamp": "stamp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards",
+        "stamp": "stamp 0.4s cubic-bezier(0.15, 2, 0.5, 0.5) forwards", // Пружинний ефект
       },
       keyframes: {
         blink: {
@@ -39,12 +38,10 @@ const config: Config = {
           "100%": { transform: "translateY(100%)" },
         },
         stamp: {
-          // 0%: Величезний штамп, прозорий (летить зверху)
-          '0%': { opacity: '0', transform: 'scale(3) rotate(-12deg)' },
-          // 50%: Момент удару (трохи стискається від сили)
-          '50%': { opacity: '1', transform: 'scale(0.8) rotate(-12deg)' },
-          // 100%: Стабілізація на папері
-          '100%': { opacity: '1', transform: 'scale(1) rotate(-12deg)' },
+          '0%': { opacity: '0', transform: 'scale(4) rotate(0deg)' }, // Летить здалеку
+          '50%': { opacity: '1', transform: 'scale(1) rotate(-12deg)' }, // Вдаряється
+          '70%': { transform: 'scale(1.1) rotate(-12deg)' }, // Відскакує трохи
+          '100%': { opacity: '1', transform: 'scale(1) rotate(-12deg)' }, // Застигає
         }
       },
     },
