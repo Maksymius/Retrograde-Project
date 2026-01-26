@@ -1,30 +1,30 @@
-# Use Python slim image
+# 1. Використовуємо slim образ
 FROM python:3.11-slim
 
-# Set working directory
+# 2. Робоча папка всередині контейнера
 WORKDIR /app
 
-# Install system dependencies for kerykeion (Swiss Ephemeris)
+# 3. Встановлюємо залежності для астрологічної ліби (gcc, g++)
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install Python dependencies
+# 4. КОПІЮЄМО З УРАХУВАННЯМ ПАПКИ backend (Monorepo setup)
+# Оскільки контекст — корінь репозиторію
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY app/ ./app/
-COPY run_bot.py .
+# 5. Копіюємо код бекенду в папку app
+COPY backend/app/ ./app/
+COPY backend/run_bot.py .
 
-# Expose port (Cloud Run will set PORT env variable)
-EXPOSE 8000
+# 6. ВИДАЛЯЄМО ХАРДКОД ПОРТУ 8000
+# Не встановлюй ENV PORT, Гугл сам його надасть.
+# EXPOSE теж не обов'язковий, але якщо хочеш — став 8080.
+EXPOSE 8080
 
-# Use environment variable for port (Cloud Run compatibility)
-ENV PORT=8000
-
-# Default command (can be overridden in docker-compose)
-CMD python -m uvicorn app.main:app --host 0.0.0.0 --port ${PORT}
+# 7. ЗАПУСК (Використовуємо динамічний порт)
+# Важливо: використовуємо подвійні лапки і $PORT без фігурних дужок 
+# або через shell-формат, щоб uvicorn його підхопив
+CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
