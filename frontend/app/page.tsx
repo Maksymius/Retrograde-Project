@@ -5,21 +5,42 @@ import { Button } from '@/components/ui/Button'
 import { TerminalInput } from '@/components/Terminal/TerminalInput'
 import { TypingAnimation } from '@/components/Terminal/TypingAnimation'
 import { ScanLines } from '@/components/Terminal/ScanLines'
+import { ResultCard } from '@/components/ResultCard'
 
 export default function HomePage() {
   const [input, setInput] = useState('')
   const [isConnecting, setIsConnecting] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
+  const [showResult, setShowResult] = useState(false)
+  const [queryData, setQueryData] = useState({ date: '', location: '' })
+
+  const parseInput = (inputStr: string) => {
+    // Simple parsing for "DD.MM.YYYY, City" format
+    const parts = inputStr.split(',').map(p => p.trim())
+    return {
+      date: parts[0] || '',
+      location: parts[1] || 'Unknown Location'
+    }
+  }
 
   const handleSubmit = () => {
     if (input.trim()) {
+      const parsed = parseInput(input)
+      setQueryData(parsed)
       setIsConnecting(true)
+      
       // Simulate connection process
       setTimeout(() => {
         setIsConnecting(false)
-        // Here we'll show results later
+        setShowResult(true)
       }, 3000)
     }
+  }
+
+  const handleReset = () => {
+    setInput('')
+    setShowResult(false)
+    setQueryData({ date: '', location: '' })
   }
 
   return (
@@ -56,7 +77,7 @@ export default function HomePage() {
               )}
             </div>
             
-            {showWelcome && (
+            {showWelcome && !showResult && (
               <div className="space-y-2">
                 <h1 className="text-4xl md:text-6xl font-mono font-bold text-retro-primary">
                   RETROGRADE
@@ -69,7 +90,7 @@ export default function HomePage() {
           </div>
 
           {/* Terminal Input Section */}
-          {showWelcome && !isConnecting && (
+          {showWelcome && !isConnecting && !showResult && (
             <div className="space-y-6">
               <TerminalInput
                 placeholder="root@retrograde:~$ "
@@ -117,6 +138,26 @@ export default function HomePage() {
                     style={{ width: '47%' }}
                   />
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Result Display */}
+          {showResult && (
+            <div className="space-y-6">
+              <ResultCard 
+                date={queryData.date}
+                location={queryData.location}
+              />
+              
+              <div className="text-center">
+                <Button 
+                  onClick={handleReset}
+                  variant="secondary"
+                  className="px-6 py-2 font-mono"
+                >
+                  НОВИЙ ЗАПИТ
+                </Button>
               </div>
             </div>
           )}

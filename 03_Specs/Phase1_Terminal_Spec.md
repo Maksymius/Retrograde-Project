@@ -29,11 +29,11 @@
 - [x] Анімація "Connecting to Noosphere..."
 - [x] Responsive дизайн для мобільних
 
-### 4. Static Result Card
-- [ ] Створити компонент ResultCard
-- [ ] Макет з фейковими даними
-- [ ] Анімація появи результату
-- [ ] Стилізація під terminal вивід
+### 4. Static Result Card ✅
+- [x] Створити компонент ResultCard
+- [x] Макет з фейковими даними
+- [x] Анімація появи результату
+- [x] Стилізація під terminal вивід
 
 ### 5. Polish & Effects
 - [ ] Додати scan lines ефект
