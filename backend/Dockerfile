@@ -1,27 +1,20 @@
-# 1. Образ
 FROM python:3.11-slim
 
-# 2. Робоча директорія
+# Робоча директорія
 WORKDIR /app
 
-# 3. Системні ліби для kerykeion
-RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+# Системні ліби
+RUN apt-get update && apt-get install -y gcc g++ && rm -rf /var/lib/apt/lists/*
 
-# 4. Встановлення залежностей
-COPY requirements.txt .
+# Копіюємо requirements ПРАВИЛЬНО (з урахуванням структури папок)
+COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Копіювання коду
-# Важливо: ми копіюємо папку app, щоб структура була /app/app/main.py
-COPY app/ ./app/
+# Копіюємо вміст папки backend/app у папку app всередині контейнера
+COPY backend/app/ ./app/
 
-# 6. Порт (Cloud Run ігнорує EXPOSE, але для порядку лишимо 8080)
-EXPOSE 8080
+# Встановлюємо PYTHONPATH, щоб Python бачив папку app як модуль
+ENV PYTHONPATH=/app
 
-# 7. ЗАПУСК
-# Прямий запуск uvicorn. Він підхопить порт від Гугла через $PORT.
-# Ми вказуємо шлях app.main:app, тому що папка app лежить у робочій директорії.
-CMD uvicorn app.main:app --host 0.0.0.0 --port $PORT
+# ВАЖЛИВО: Запуск. Ми в папці /app, тому шлях app.main:app правильний
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT}"]
