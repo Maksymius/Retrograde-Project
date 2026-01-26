@@ -70,6 +70,11 @@ body {
   50% { opacity: 0; }
 }
 
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
 /* Enhanced terminal effects */
 .terminal-flicker {
   animation: flicker 0.15s infinite linear;
