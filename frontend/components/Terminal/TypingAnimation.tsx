@@ -1,43 +1,48 @@
-'use client'
+import { useState, useEffect, useRef } from 'react';
 
-import { useState, useEffect } from 'react'
-import { cn } from '@/lib/utils'
-
-interface TypingAnimationProps {
-  text: string
-  speed?: number
-  className?: string
-  onComplete?: () => void
-}
-
-export function TypingAnimation({ 
+export const TypingAnimation = ({ 
   text, 
   speed = 50, 
-  className,
   onComplete 
-}: TypingAnimationProps) {
-  const [displayedText, setDisplayedText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
+}: { 
+  text: string; 
+  speed?: number; 
+  onComplete?: () => void 
+}) => {
+  const [displayedText, setDisplayedText] = useState('');
+  const index = useRef(0);
+  
+  // Зберігаємо onComplete в ref, щоб він не тригерив перезапуск ефекту
+  const onCompleteRef = useRef(onComplete);
+
+  // Оновлюємо ref, якщо функція змінилась, але не перезапускаємо анімацію
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   useEffect(() => {
-    if (currentIndex < text.length) {
-      const timer = setTimeout(() => {
-        setDisplayedText(prev => prev + text[currentIndex])
-        setCurrentIndex(prev => prev + 1)
-      }, speed)
-      
-      return () => clearTimeout(timer)
-    } else if (onComplete) {
-      onComplete()
-    }
-  }, [currentIndex, text, speed, onComplete])
+    index.current = 0;
+    setDisplayedText('');
 
-  return (
-    <span className={cn("font-mono", className)}>
-      {displayedText}
-      {currentIndex < text.length && (
-        <span className="animate-blink text-green-400">|</span>
-      )}
-    </span>
-  )
-}
+    const timer = setInterval(() => {
+      // Якщо дійшли до кінця тексту
+      if (index.current >= text.length) {
+        clearInterval(timer);
+        // Викликаємо функцію з ref
+        if (onCompleteRef.current) {
+          onCompleteRef.current();
+        }
+        return;
+      }
+
+      // Додаємо наступну літеру
+      const nextChar = text.charAt(index.current);
+      setDisplayedText((prev) => prev + nextChar);
+      index.current++;
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed]); // Прибрали onComplete з залежностей!
+
+  return <span>{displayedText}</span>;
+};

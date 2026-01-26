@@ -1,0 +1,355 @@
+This file is a merged representation of a subset of the codebase, containing specifically included files, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of a subset of the repository's contents that is considered the most important context.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Only files matching these patterns are included: components/Terminal/**
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+components/
+  Terminal/
+    GlitchEffect.tsx
+    ScanLines.tsx
+    SoundIndicator.tsx
+    TerminalInput.tsx
+    TypingAnimation.tsx
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="components/Terminal/GlitchEffect.tsx">
+'use client'
+
+import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+
+interface GlitchEffectProps {
+  children: React.ReactNode
+  intensity?: 'low' | 'medium' | 'high'
+  trigger?: boolean
+  className?: string
+}
+
+export function GlitchEffect({ 
+  children, 
+  intensity = 'medium', 
+  trigger = false,
+  className 
+}: GlitchEffectProps) {
+  const [isGlitching, setIsGlitching] = useState(false)
+
+  useEffect(() => {
+    if (trigger) {
+      setIsGlitching(true)
+      const timer = setTimeout(() => setIsGlitching(false), 200)
+      return () => clearTimeout(timer)
+    }
+  }, [trigger])
+
+  const glitchStyles = {
+    low: 'animate-pulse',
+    medium: 'animate-bounce',
+    high: 'animate-ping'
+  }
+
+  return (
+    <div className={cn("relative", className)}>
+      <div className={cn(
+        "transition-all duration-200",
+        isGlitching && [
+          "filter",
+          "contrast-150",
+          "brightness-110",
+          glitchStyles[intensity]
+        ]
+      )}>
+        {children}
+      </div>
+      
+      {isGlitching && (
+        <>
+          {/* Glitch overlay layers */}
+          <div 
+            className="absolute inset-0 opacity-30 mix-blend-multiply"
+            style={{
+              background: `
+                linear-gradient(90deg, 
+                  transparent 0%, 
+                  #ff0000 2%, 
+                  transparent 4%,
+                  transparent 96%,
+                  #00ff00 98%,
+                  transparent 100%
+                )
+              `,
+              animation: 'glitch-slide 0.1s infinite'
+            }}
+          />
+          <div 
+            className="absolute inset-0 opacity-20 mix-blend-screen"
+            style={{
+              background: `
+                linear-gradient(180deg, 
+                  transparent 0%, 
+                  #0000ff 50%, 
+                  transparent 100%
+                )
+              `,
+              animation: 'glitch-slide 0.15s infinite reverse'
+            }}
+          />
+        </>
+      )}
+    </div>
+  )
+}
+</file>
+
+<file path="components/Terminal/ScanLines.tsx">
+'use client'
+
+import { cn } from '@/lib/utils'
+
+interface ScanLinesProps {
+  className?: string
+  intensity?: 'low' | 'medium' | 'high'
+}
+
+export function ScanLines({ className, intensity = 'low' }: ScanLinesProps) {
+  return (
+    <div 
+      className={cn(
+        "absolute inset-0 pointer-events-none z-10",
+        "bg-gradient-to-b from-transparent via-transparent to-transparent",
+        {
+          'opacity-20': intensity === 'low',
+          'opacity-40': intensity === 'medium', 
+          'opacity-60': intensity === 'high',
+        },
+        className
+      )}
+      style={{
+        backgroundImage: `
+          repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(0, 255, 65, 0.1) 2px,
+            rgba(0, 255, 65, 0.1) 4px
+          )
+        `,
+        animation: 'scanline 8s linear infinite'
+      }}
+    />
+  )
+}
+</file>
+
+<file path="components/Terminal/SoundIndicator.tsx">
+'use client'
+
+import { useEffect, useState } from 'react'
+import { cn } from '@/lib/utils'
+
+interface SoundIndicatorProps {
+  type?: 'typing' | 'beep' | 'connection' | 'error'
+  active?: boolean
+  className?: string
+}
+
+export function SoundIndicator({ 
+  type = 'typing', 
+  active = false,
+  className 
+}: SoundIndicatorProps) {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (active) {
+      setIsVisible(true)
+      const timer = setTimeout(() => setIsVisible(false), 300)
+      return () => clearTimeout(timer)
+    }
+  }, [active])
+
+  const getIndicatorStyle = () => {
+    switch (type) {
+      case 'typing':
+        return 'bg-green-400'
+      case 'beep':
+        return 'bg-amber-500'
+      case 'connection':
+        return 'bg-blue-400'
+      case 'error':
+        return 'bg-red-500'
+      default:
+        return 'bg-green-400'
+    }
+  }
+
+  if (!isVisible) return null
+
+  return (
+    <div className={cn(
+      "fixed top-4 right-4 z-50",
+      "w-3 h-3 rounded-full",
+      "animate-pulse",
+      getIndicatorStyle(),
+      className
+    )}>
+      <div className={cn(
+        "absolute inset-0 rounded-full animate-ping",
+        getIndicatorStyle(),
+        "opacity-75"
+      )} />
+    </div>
+  )
+}
+</file>
+
+<file path="components/Terminal/TerminalInput.tsx">
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Input } from '@/components/ui/Input'
+import { cn } from '@/lib/utils'
+
+interface TerminalInputProps {
+  placeholder?: string
+  value: string
+  onChange: (value: string) => void
+  onSubmit?: () => void
+  className?: string
+}
+
+export function TerminalInput({ 
+  placeholder = "root@retrograde:~$ ", 
+  value, 
+  onChange, 
+  onSubmit,
+  className 
+}: TerminalInputProps) {
+  const [showCursor, setShowCursor] = useState(true)
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowCursor(prev => !prev)
+    }, 500)
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && onSubmit) {
+      onSubmit()
+    }
+  }
+
+  return (
+    <div className={cn("relative", className)}>
+      <div className="flex items-center bg-gray-900/50 border border-green-400 rounded-lg p-4 terminal-glow">
+        <span className="text-green-400 font-mono text-sm mr-2 whitespace-nowrap">
+          {placeholder}
+        </span>
+        <Input
+          variant="terminal"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onKeyPress={handleKeyPress}
+          className="border-none bg-transparent p-0 focus:ring-0 flex-1"
+          autoFocus
+        />
+        <span className={cn(
+          "text-green-400 font-mono text-sm ml-1",
+          showCursor ? "opacity-100" : "opacity-0"
+        )}>
+          |
+        </span>
+      </div>
+    </div>
+  )
+}
+</file>
+
+<file path="components/Terminal/TypingAnimation.tsx">
+'use client'
+
+import { useState, useEffect } from 'react'
+import { cn } from '@/lib/utils'
+
+interface TypingAnimationProps {
+  text: string
+  speed?: number
+  className?: string
+  onComplete?: () => void
+}
+
+export function TypingAnimation({ 
+  text, 
+  speed = 50, 
+  className,
+  onComplete 
+}: TypingAnimationProps) {
+  const [displayedText, setDisplayedText] = useState('')
+  const [currentIndex, setCurrentIndex] = useState(0)
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex])
+        setCurrentIndex(prev => prev + 1)
+      }, speed)
+      
+      return () => clearTimeout(timer)
+    } else if (onComplete) {
+      onComplete()
+    }
+  }, [currentIndex, text, speed, onComplete])
+
+  return (
+    <span className={cn("font-mono", className)}>
+      {displayedText}
+      {currentIndex < text.length && (
+        <span className="animate-blink text-green-400">|</span>
+      )}
+    </span>
+  )
+}
+</file>
+
+</files>

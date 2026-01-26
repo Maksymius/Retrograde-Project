@@ -1,60 +1,38 @@
-'use client'
+import React, { useRef, useEffect } from 'react';
 
-import { useState, useEffect } from 'react'
-import { Input } from '@/components/ui/Input'
-import { cn } from '@/lib/utils'
-
-interface TerminalInputProps {
-  placeholder?: string
-  value: string
-  onChange: (value: string) => void
-  onSubmit?: () => void
-  className?: string
+interface Props {
+  value: string;
+  onChange: (val: string) => void;
+  onSubmit: () => void;
+  placeholder?: string;
+  className?: string;
 }
 
-export function TerminalInput({ 
-  placeholder = "root@retrograde:~$ ", 
-  value, 
-  onChange, 
-  onSubmit,
-  className 
-}: TerminalInputProps) {
-  const [showCursor, setShowCursor] = useState(true)
+export const TerminalInput = ({ value, onChange, onSubmit, placeholder = "root@user:~$", className }: Props) => {
+  const inputRef = useRef<HTMLInputElement>(null);
 
+  // Автофокус при завантаженні
   useEffect(() => {
-    const interval = setInterval(() => {
-      setShowCursor(prev => !prev)
-    }, 500)
-    return () => clearInterval(interval)
-  }, [])
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && onSubmit) {
-      onSubmit()
-    }
-  }
+    inputRef.current?.focus();
+  }, []);
 
   return (
-    <div className={cn("relative", className)}>
-      <div className="flex items-center bg-gray-900/50 border border-green-400 rounded-lg p-4 terminal-glow">
-        <span className="text-green-400 font-mono text-sm mr-2 whitespace-nowrap">
-          {placeholder}
-        </span>
-        <Input
-          variant="terminal"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="border-none bg-transparent p-0 focus:ring-0 flex-1"
-          autoFocus
-        />
-        <span className={cn(
-          "text-green-400 font-mono text-sm ml-1",
-          showCursor ? "opacity-100" : "opacity-0"
-        )}>
-          |
-        </span>
-      </div>
+    <div className={`relative flex items-center bg-retro-surface/50 border border-retro-border p-4 rounded ${className}`} onClick={() => inputRef.current?.focus()}>
+      <span className="text-retro-accent font-mono mr-3 select-none text-sm md:text-base whitespace-nowrap">
+        {placeholder}
+      </span>
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
+        className="w-full bg-transparent border-none outline-none text-retro-text font-mono text-lg caret-retro-primary"
+        autoComplete="off"
+        spellCheck="false"
+      />
+      {/* Курсор, що блимає */}
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-4 bg-retro-primary animate-blink pointer-events-none opacity-50" />
     </div>
-  )
-}
+  );
+};
