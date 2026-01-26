@@ -6,17 +6,34 @@ import { TypingAnimation } from '@/components/Terminal/TypingAnimation'
 interface ResultCardProps {
   date: string
   location: string
+  apiResponse?: any
 }
 
-export function ResultCard({ date, location }: ResultCardProps) {
+export function ResultCard({ date, location, apiResponse }: ResultCardProps) {
   // Стани: 0=Start, 1=Grid, 2=Typing, 3=Stamped
   const [stage, setStage] = useState(0)
 
-  const mockData = {
-    id: `CASE-${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}`,
-    entropyLevel: "CRITICAL (98%)",
-    karmicDebt: "UNPAYABLE",
-    verdict: "Суб'єкт виявляє ознаки хронічної наївності. Планетарна конфігурація вказує на те, що ви народилися не в той час, не в тому місці, і ймовірно, не на тій планеті. Рекомендовано примусове заземлення."
+  // Use real API data or fallback to mock
+  const data = apiResponse?.data || {
+    astral_data: { Sun: "Unknown", Moon: "Unknown", Asc: "Unknown" },
+    verdict: "Системи Департаменту тимчасово недоступні. Спробуйте пізніше.",
+    entropy: "SYSTEM_ERROR",
+    case_id: "RD-500-ERROR"
+  }
+
+  const displayData = {
+    id: data.case_id || `CASE-${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}`,
+    entropyLevel: data.entropy === "CRITICAL" ? "CRITICAL (98%)" : 
+                  data.entropy === "HIGH" ? "HIGH (87%)" :
+                  data.entropy === "MEDIUM" ? "MEDIUM (64%)" :
+                  data.entropy === "LOW" ? "LOW (23%)" : 
+                  data.entropy || "UNKNOWN",
+    karmicDebt: data.entropy === "CRITICAL" ? "UNPAYABLE" :
+                data.entropy === "HIGH" ? "SEVERE" :
+                data.entropy === "MEDIUM" ? "MODERATE" :
+                data.entropy === "LOW" ? "MINIMAL" : "CALCULATING...",
+    verdict: data.verdict || "Вердикт недоступний.",
+    astralData: data.astral_data || {}
   }
 
   useEffect(() => {
@@ -40,7 +57,7 @@ export function ResultCard({ date, location }: ResultCardProps) {
             <span className="text-[10px] text-zinc-600 uppercase tracking-[0.2em]">Department of Retrograde</span>
             <div className="flex items-center gap-2 text-red-500">
                <span className={`w-2 h-2 bg-red-500 rounded-sm ${stage < 3 ? 'animate-pulse' : ''}`} />
-               <span className="font-bold tracking-widest text-sm">CASE // {mockData.id}</span>
+               <span className="font-bold tracking-widest text-sm">CASE // {displayData.id}</span>
             </div>
           </div>
           <div className="text-right">
@@ -63,32 +80,32 @@ export function ResultCard({ date, location }: ResultCardProps) {
                <span className="text-zinc-300">ONLINE</span>
             </div>
             
-            {/* Наукові дані */}
-            <div className="flex flex-col border-l border-cyan-900/50 pl-3">
-              <span className="text-[10px] text-zinc-500 uppercase">Geo-Coordinates</span>
-              <span className="text-cyan-400 text-xs font-mono">{(Math.random() * 180 - 90).toFixed(4)}° / {(Math.random() * 360 - 180).toFixed(4)}°</span>
+            {/* Астрологічні дані */}
+            <div className="flex flex-col border-l border-purple-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Sun Sign</span>
+              <span className="text-purple-400 text-xs font-mono">{displayData.astralData.Sun || "N/A"}</span>
             </div>
-            <div className="flex flex-col border-l border-cyan-900/50 pl-3">
-              <span className="text-[10px] text-zinc-500 uppercase">Azimuth Angle</span>
-              <span className="text-cyan-400 text-xs font-mono">{(Math.random() * 360).toFixed(2)}° ± 0.47°</span>
+            <div className="flex flex-col border-l border-purple-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Moon Sign</span>
+              <span className="text-purple-400 text-xs font-mono">{displayData.astralData.Moon || "N/A"}</span>
             </div>
             
             <div className="flex flex-col border-l border-blue-900/50 pl-3">
-              <span className="text-[10px] text-zinc-500 uppercase">Declination</span>
-              <span className="text-blue-400 text-xs font-mono">{(Math.random() * 90 - 45).toFixed(3)}° (Solar)</span>
+              <span className="text-[10px] text-zinc-500 uppercase">Ascendant</span>
+              <span className="text-blue-400 text-xs font-mono">{displayData.astralData.Asc || "N/A"}</span>
             </div>
-            <div className="flex flex-col border-l border-blue-900/50 pl-3">
-              <span className="text-[10px] text-zinc-500 uppercase">Right Ascension</span>
-              <span className="text-blue-400 text-xs font-mono">{(Math.random() * 24).toFixed(2)}h {(Math.random() * 60).toFixed(0)}m</span>
+            <div className="flex flex-col border-l border-cyan-900/50 pl-3">
+              <span className="text-[10px] text-zinc-500 uppercase">Calculation Status</span>
+              <span className="text-cyan-400 text-xs font-mono">{apiResponse?.status === "success" ? "COMPLETE" : "ERROR"}</span>
             </div>
             
             <div className="flex flex-col border-l border-red-900/50 pl-3">
               <span className="text-[10px] text-zinc-500 uppercase">Entropy Level</span>
-              <span className="text-red-500 font-bold tracking-wider">{mockData.entropyLevel}</span>
+              <span className="text-red-500 font-bold tracking-wider">{displayData.entropyLevel}</span>
             </div>
             <div className="flex flex-col border-l border-zinc-800 pl-3">
               <span className="text-[10px] text-zinc-500 uppercase">Karmic Debt</span>
-              <span className="text-yellow-600 font-bold">{mockData.karmicDebt}</span>
+              <span className="text-yellow-600 font-bold">{displayData.karmicDebt}</span>
             </div>
           </div>
 
@@ -101,7 +118,7 @@ export function ResultCard({ date, location }: ResultCardProps) {
                 </div>
                 <div className="text-zinc-300 text-sm leading-7 tracking-wide">
                   <TypingAnimation 
-                    text={mockData.verdict} 
+                    text={displayData.verdict} 
                     speed={20} 
                     onComplete={() => {
                       // Затримка 1 секунда перед штампом

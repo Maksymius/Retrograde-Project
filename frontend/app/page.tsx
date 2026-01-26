@@ -15,7 +15,11 @@ export default function HomePage() {
   const [isConnecting, setIsConnecting] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [showResult, setShowResult] = useState(false)
-  const [queryData, setQueryData] = useState({ date: '', location: '' })
+  const [queryData, setQueryData] = useState<{ 
+    date: string; 
+    location: string; 
+    apiResponse?: any 
+  }>({ date: '', location: '' })
   const [glitchTrigger, setGlitchTrigger] = useState(false)
   const [soundActive, setSoundActive] = useState(false)
 
@@ -37,7 +41,7 @@ export default function HomePage() {
     setTimeout(() => setSoundActive(false), 200)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (input.trim()) {
       const parsed = parseInput(input)
       setQueryData(parsed)
@@ -49,12 +53,58 @@ export default function HomePage() {
         if (Math.random() > 0.7) triggerGlitch()
       }, 500)
       
-      setTimeout(() => {
+      try {
+        // Call our backend API
+        const response = await fetch('http://localhost:8000/api/predict', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            city: parsed.location,
+            date: parsed.date // Expecting format: "1991-08-24"
+          })
+        })
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        
+        const data = await response.json()
+        
+        // Store the API response for ResultCard
+        setQueryData({
+          ...parsed,
+          apiResponse: data
+        })
+        
         clearInterval(glitchInterval)
         setIsConnecting(false)
         setShowResult(true)
         triggerSound('beep')
-      }, 3000)
+        
+      } catch (error) {
+        console.error('API Error:', error)
+        clearInterval(glitchInterval)
+        
+        // Fallback to mock data on error
+        setQueryData({
+          ...parsed,
+          apiResponse: {
+            status: "error",
+            data: {
+              astral_data: {},
+              verdict: "Системи Департаменту тимчасово перевантажені космічною бюрократією. Спробуйте пізніше.",
+              entropy: "CONNECTION_LOST",
+              case_id: "RD-500-ERROR"
+            }
+          }
+        })
+        
+        setIsConnecting(false)
+        setShowResult(true)
+        triggerSound('error')
+      }
     }
   }
 
@@ -160,6 +210,7 @@ export default function HomePage() {
               <ResultCard 
                 date={queryData.date}
                 location={queryData.location}
+                apiResponse={queryData.apiResponse}
               />
               
               <div className="text-center">
