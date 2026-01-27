@@ -190,16 +190,10 @@ export default function HomePage() {
 
               {/* Cyberpunk Divider */}
               {showWelcome && (
-                <div className="flex items-center justify-center w-full max-w-md mx-auto my-4 animate-in fade-in duration-500 delay-200">
-                  <div className="flex-1 h-px bg-gradient-to-r from-transparent via-green-500/50 to-transparent"></div>
-                  <div className="mx-3 flex items-center gap-1">
-                    <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
-                    <div className="w-2 h-px bg-green-500/70"></div>
-                    <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse delay-75"></div>
-                    <div className="w-2 h-px bg-green-500/70"></div>
-                    <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse delay-150"></div>
+                <div className="w-full max-w-md mx-auto my-8">
+                  <div className="h-px w-full bg-zinc-900 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-green-900/50 to-transparent w-1/2 animate-[shimmer_2s_infinite] translate-x-[-100%]" />
                   </div>
-                  <div className="flex-1 h-px bg-gradient-to-l from-transparent via-green-500/50 to-transparent"></div>
                 </div>
               )}
 

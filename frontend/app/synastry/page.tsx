@@ -18,7 +18,11 @@ const DOOM_SCENARIOS = [
   { title: "ЕНЕРГЕТИЧНИЙ ВАМПІРИЗМ", desc: "Один з вас буде висмоктувати життєві сили іншого. Спойлер: це не ви.", danger: 82 },
   { title: "КОМУНІКАТИВНИЙ КОЛАПС", desc: "Ваші Меркурії говорять різними мовами. Навіть Google Translate здасться.", danger: 54 },
   { title: "РЕВНОЩІ КОСМІЧНОГО МАСШТАБУ", desc: "Ваші Венери конфліктують. Ревнощі до бариста в кав'ярні гарантовані.", danger: 91 },
-  { title: "ХРОНІЧНА НЕСИНХРОННІСТЬ", desc: "Ви завжди будете в різних фазах життя. Як два поїзди на паралельних коліях.", danger: 37 }
+  { title: "ХРОНІЧНА НЕСИНХРОННІСТЬ", desc: "Ви завжди будете в різних фазах життя. Як два поїзди на паралельних коліях.", danger: 37 },
+  { title: "МЕТАФІЗИЧНИЙ ГЛЮК", desc: "Ваші реальності не збігаються. Ви будете жити в паралельних всесвітах під одним дахом.", danger: 63 },
+  { title: "КАРМІЧНИЙ БОРГ", desc: "У минулому житті ви були кредитором і боржником. Тепер час розплачуватися.", danger: 85 },
+  { title: "ЦИФРОВИЙ ДЕТОКС", desc: "Ваші аури несумісні з Wi-Fi. Доведеться спілкуватися голосом. Жах.", danger: 28 },
+  { title: "ЕКЗИСТЕНЦІЙНИЙ ПЕТЧ", desc: "Разом ви будете постійно шукати сенс життя і не знаходити. Романтично.", danger: 74 }
 ]
 export default function SynastryPage() {
   const searchParams = useSearchParams()
@@ -106,6 +110,22 @@ export default function SynastryPage() {
               />
             </div>
 
+           {/* Гонзо-інструкція */}
+            <div className="p-4 bg-zinc-900/50 border-l-2 border-red-500 text-left backdrop-blur-sm">
+              <p className="text-[11px] text-zinc-300 leading-relaxed font-mono tracking-wide">
+                <span className="text-red-500 font-bold uppercase">ПРОТОКОЛ ХИЖАК:</span> 
+                Згенеруйте посилання-приманку. Надішліть об'єкту вашої гормональної залежності. 
+                Система змоделює зіткнення ваших его і розрахує час до повного взаємного знищення.
+                Ви дізнаєтесь, хто ви одне для одного: кармічні партнери чи співкамерники.
+              </p>
+              <div className="mt-3 pt-3 border-t border-dashed border-zinc-700">
+                <p className="text-[10px] text-zinc-500 italic">
+                  "Стосунки — це спільна оренда пекла з правом викупу, якого не існує."
+                  <br/>— Архіваріус, Відділ Розбитих Ілюзій
+                </p>
+              </div>
+            </div>
+
             {!inviteLink ? (
               <Button 
                 onClick={createTrap} 
@@ -130,9 +150,14 @@ export default function SynastryPage() {
                 >
                   СКОПІЮВАТИ ОТРУТУ
                 </Button>
-                <p className="text-[10px] text-zinc-600 text-center leading-relaxed">
-                  Надішліть це посилання жертві. <br/>
-                  Коли вона його відкриє, її дата буде автоматично захоплена.
+                <p className="text-[10px] text-zinc-500 text-center leading-relaxed font-mono mt-3 bg-black/50 p-2 border border-zinc-800">
+                  STATUS: LINK_GENERATED. WAITING_FOR_TARGET.
+                  <br/>
+                  Надішліть посилання. При переході дані партнера будуть синхронізовані з вашим профілем.
+                  <br/>
+                  <span className="text-red-600 font-bold block mt-1">
+                    [!] Результат не підлягає оскарженню.
+                  </span>
                 </p>
               </div>
             )}
@@ -166,13 +191,18 @@ export default function SynastryPage() {
 
             {/* Кнопка запуску симуляції */}
             {!analyzing ? (
-              <Button 
-                onClick={fight}
-                disabled={!myDate}
-                className="w-full py-6 text-lg font-black tracking-[0.2em] bg-red-600 hover:bg-red-500 text-black shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_50px_rgba(220,38,38,0.5)] transition-all"
-              >
-                РОЗПОЧАТИ КОНФЛІКТ
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  onClick={fight}
+                  disabled={!myDate}
+                  className="w-full py-6 text-lg font-black tracking-[0.2em] bg-red-600 hover:bg-red-500 text-black shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:shadow-[0_0_50px_rgba(220,38,38,0.5)] transition-all"
+                >
+                  РОЗПОЧАТИ КОНФЛІКТ
+                </Button>
+                <p className="text-[9px] text-zinc-600 text-center font-mono">
+                  Система проаналізує ваші кармічні борги і видасть остаточний вердикт
+                </p>
+              </div>
             ) : (
               <div className="space-y-2 text-center">
                  <div className="text-red-500 text-xs tracking-widest animate-pulse">
@@ -204,7 +234,7 @@ export default function SynastryPage() {
                <div className="h-px w-20 mx-auto bg-red-600/50" />
             </div>
 
-            <p className="text-sm text-zinc-300 leading-relaxed text-center font-serif italic">
+            <p className="text-sm text-zinc-300 leading-relaxed text-center font-mono">
               "{result.desc}"
             </p>
 
@@ -222,6 +252,16 @@ export default function SynastryPage() {
                  {/* Смужки */}
                  <div className="absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_5px,rgba(0,0,0,0.5)_5px,rgba(0,0,0,0.5)_10px)]" />
               </div>
+            </div>
+
+            {/* Додаткова інформація */}
+            <div className="text-center space-y-2 pt-4 border-t border-zinc-800/50 mt-4">
+              <p className="text-[10px] text-zinc-600 font-mono uppercase tracking-widest">
+                ALGORITHM: CHAOS_THEORY_V2 // ACCURACY: PAINFUL
+              </p>
+              <p className="text-[9px] text-zinc-700">
+                <span className="text-red-900 font-bold">DISCLAIMER:</span> Департамент не несе відповідальності за розбиті серця, меблі та втрачені роки життя.
+              </p>
             </div>
 
             <div className="pt-4 grid grid-cols-2 gap-4">
