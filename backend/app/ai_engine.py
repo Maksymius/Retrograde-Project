@@ -44,16 +44,8 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
     logger.info(f"🔮 Generating verdict for astral data: {astral_data}")
     
     try:
-        # Try available model names in order of preference
-        # Using more stable models first
-        model_names = [
-            'gemini-1.5-flash',
-            'gemini-1.5-pro', 
-            'gemini-pro',
-            'gemini-2.5-flash',
-            'gemini-pro-latest',
-            'gemini-2.5-pro'
-        ]
+        # Use models that work with current API key
+        model_names = ['gemini-2.5-flash', 'gemini-pro-latest', 'gemini-2.5-pro']
         
         model = None
         last_error = None
