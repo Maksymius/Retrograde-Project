@@ -7,11 +7,14 @@ interface Planet {
 }
 
 export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
-  // Ніяких useState та useEffect. Все робить CSS. Це економить ресурси процесора.
+  
+  // НАЛАШТУВАННЯ МАСШТАБУ
+  // Зменшуємо радіуси, щоб текст не вилазив за рамки 200x200
+  const ORBIT_RADIUS = 65; // Було 80. Радіус, де стоять планети
+  const TEXT_RADIUS = 82;  // Було 105. Радіус тексту (ближче до центру)
 
-  // Математика координат (Центр 100,100, Радіус 80)
-  const getCoords = (deg: number, radius: number = 80) => {
-    // -90 градусів, щоб 0 був зверху (як на годиннику 12:00)
+  // Математика координат (Центр 100,100)
+  const getCoords = (deg: number, radius: number) => {
     const rad = (deg - 90) * (Math.PI / 180)
     return {
       x: 100 + radius * Math.cos(rad),
@@ -20,28 +23,32 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
   }
 
   return (
-    <div className="relative w-full aspect-square max-w-[320px] mx-auto my-8 group">
+    // Додаємо p-2 (padding), щоб гарантувати відступ від країв батьківського блоку
+    <div className="relative w-full aspect-square max-w-[320px] mx-auto my-8 group p-2">
       
       {/* --- 1. ФОНОВИЙ ШАР (Background) --- */}
-      <div className="absolute inset-0 rounded-full border border-retro-border/50 shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-black/40 backdrop-blur-sm" />
+      {/* inset-2, щоб фон співпадав з новим розміром сітки */}
+      <div className="absolute inset-2 rounded-full border border-retro-border/50 shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-black/40 backdrop-blur-sm" />
       
       {/* --- 2. SVG (Статичні дані) --- */}
-      <svg viewBox="0 0 200 200" className="w-full h-full relative z-10">
+      <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 overflow-visible">
         
-        {/* Сітка прицілу */}
-        <circle cx="100" cy="100" r="30" fill="none" stroke="#333" strokeWidth="0.5" strokeDasharray="2 2" />
-        <circle cx="100" cy="100" r="60" fill="none" stroke="#333" strokeWidth="0.5" strokeDasharray="4 4" />
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#444" strokeWidth="1" />
-        <line x1="100" y1="10" x2="100" y2="190" stroke="#222" strokeWidth="1" />
-        <line x1="10" y1="100" x2="190" y2="100" stroke="#222" strokeWidth="1" />
+        {/* Сітка прицілу (ЗМЕНШЕНІ РАДІУСИ: 25, 50, 75) */}
+        <circle cx="100" cy="100" r="25" fill="none" stroke="#333" strokeWidth="0.5" strokeDasharray="2 2" />
+        <circle cx="100" cy="100" r="50" fill="none" stroke="#333" strokeWidth="0.5" strokeDasharray="4 4" />
+        <circle cx="100" cy="100" r="75" fill="none" stroke="#444" strokeWidth="1" />
+        
+        {/* Хрестовина (трохи коротша, щоб не впиралась в край) */}
+        <line x1="100" y1="20" x2="100" y2="180" stroke="#222" strokeWidth="1" />
+        <line x1="20" y1="100" x2="180" y2="100" stroke="#222" strokeWidth="1" />
 
-        {/* ГРУПА ПЛАНЕТ (Вони НЕ крутяться, вони зафіксовані в часі) */}
+        {/* ГРУПА ПЛАНЕТ */}
         <g>
-          {/* Аспекти (Лінії зв'язку) */}
+          {/* Аспекти */}
           {planets.map((p1, i) => (
             planets.slice(i + 1).map((p2, j) => {
-              const c1 = getCoords(p1.deg)
-              const c2 = getCoords(p2.deg)
+              const c1 = getCoords(p1.deg, ORBIT_RADIUS)
+              const c2 = getCoords(p2.deg, ORBIT_RADIUS)
               return (
                 <line 
                   key={`link-${i}-${j}`}
@@ -55,11 +62,10 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
             })
           ))}
 
-          {/* Самі Планети */}
+          {/* Планети */}
           {planets.map((p, i) => {
-            const { x, y } = getCoords(p.deg)
-            // Текст трохи далі від точки (радіус 105)
-            const textCoords = getCoords(p.deg, 105) 
+            const { x, y } = getCoords(p.deg, ORBIT_RADIUS)
+            const textCoords = getCoords(p.deg, TEXT_RADIUS) 
             
             return (
               <g key={`planet-${i}`}>
@@ -70,7 +76,7 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
                 <circle cx={x} cy={y} r="4" fill={p.color} fillOpacity="0.2" className="animate-pulse" />
                 <circle cx={x} cy={y} r="1.5" fill="#fff" />
                 
-                {/* Підпис (Завжди читабельний, бо група не крутиться) */}
+                {/* Підпис */}
                 <text 
                   x={textCoords.x} 
                   y={textCoords.y} 
@@ -80,7 +86,15 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
                   fontFamily="var(--font-jetbrains-mono)" 
                   textAnchor="middle" 
                   alignmentBaseline="middle"
-                  style={{ textShadow: `0 0 10px ${p.color}` }}
+                  style={{ 
+                    textShadow: `0 0 10px ${p.color}`,
+                    // Додаткова страховка: фон під текстом, щоб читалось на лініях
+                    paintOrder: "stroke",
+                    stroke: "rgba(0,0,0,0.8)",
+                    strokeWidth: "2px",
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                  }}
                 >
                   {p.name}
                 </text>
@@ -93,18 +107,16 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
         <circle cx="100" cy="100" r="2" fill="#fff" />
       </svg>
       
-      {/* --- 3. СКАНЕР (Обертається тільки він!) --- */}
-      <div className="absolute inset-0 z-20 pointer-events-none rounded-full overflow-hidden">
-         {/* Градієнтний хвіст радара */}
+      {/* --- 3. СКАНЕР --- */}
+      {/* inset-2 також тут, щоб сканер ходив чітко по зовнішньому колу сітки */}
+      <div className="absolute inset-2 z-20 pointer-events-none rounded-full overflow-hidden">
          <div className="w-full h-full bg-[conic-gradient(transparent_270deg,rgba(0,255,65,0.15)_360deg)] animate-[spin_4s_linear_infinite]" />
-         
-         {/* Тонка лінія сканера (Лідер променя) */}
          <div className="absolute inset-0 animate-[spin_4s_linear_infinite]">
             <div className="h-1/2 w-[1px] bg-retro-accent/50 absolute left-1/2 top-0 origin-bottom shadow-[0_0_10px_#00FF41]" />
          </div>
       </div>
 
-      {/* Декоративні кутики рамки */}
+      {/* Декоративні кутики (зовнішні) */}
        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-retro-text/30" />
        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-retro-text/30" />
        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-retro-text/30" />
