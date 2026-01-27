@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astro Radar Demo - Retrograde Department</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 {
+            color: #FFB000;
+            margin-bottom: 10px;
+            font-size: 2em;
+            text-align: center;
+        }
+        .subtitle {
+            color: #666;
+            font-size: 0.8em;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .radar-container {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1;
+            margin: 20px auto;
+        }
+        .ring {
+            position: absolute;
+            border: 1px solid #333;
+            border-radius: 50%;
+            opacity: 0.3;
+        }
+        .ring-outer { inset: 0; }
+        .ring-inner { inset: 15%; border-style: dashed; opacity: 0.2; }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 10px rgba(0, 255, 65, 0.2));
+        }
+        
+        .scanner {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border-top: 2px solid rgba(0, 255, 65, 0.3);
+            animation: spin 4s linear infinite;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .planet-dot {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        .info {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            padding: 20px;
+            margin-top: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        .info h2 {
+            color: #00FF41;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .planet-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .planet-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .planet-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <h1>🛸 ASTRO RADAR</h1>
+    <p class="subtitle">DEPARTMENT OF RETROGRADE // PLANETARY SCANNER v2.0</p>
+    
+    <div class="radar-container">
+        <div class="ring ring-outer"></div>
+        <div class="ring ring-inner"></div>
+        
+        <svg id="radar" viewBox="0 0 200 200">
+            <g id="rotating-group">
+                <!-- Lines will be drawn here -->
+                <g id="lines"></g>
+                <!-- Planets will be drawn here -->
+                <g id="planets"></g>
+            </g>
+            <!-- Center point -->
+            <circle cx="100" cy="100" r="2" fill="#fff" />
+        </svg>
+        
+        <div class="scanner"></div>
+    </div>
+    
+    <div class="info">
+        <h2>&gt; DETECTED CELESTIAL BODIES</h2>
+        <div class="planet-list" id="planet-list"></div>
+    </div>
+
+    <script>
+        // Sample planet data (from backend test)
+        const planets = [
+            { name: "SUN", deg: 150.71, color: "#FFB000" },
+            { name: "MOON", deg: 319.35, color: "#E0E0E0" },
+            { name: "MERC", deg: 146.21, color: "#00FF41" },
+            { name: "VEN", deg: 148.29, color: "#FF3399" },
+            { name: "MARS", deg: 174.94, color: "#FF3333" },
+            { name: "JUP", deg: 145.92, color: "#9D00FF" },
+            { name: "SAT", deg: 301.54, color: "#555555" }
+        ];
+
+        let rotation = 0;
+
+        // Convert degrees to coordinates
+        function getCoords(deg, radius = 80) {
+            const rad = (deg - 90) * (Math.PI / 180);
+            return {
+                x: 100 + radius * Math.cos(rad),
+                y: 100 + radius * Math.sin(rad)
+            };
+        }
+
+        // Draw aspect lines
+        function drawLines() {
+            const linesGroup = document.getElementById('lines');
+            linesGroup.innerHTML = '';
+            
+            planets.forEach((p1, i) => {
+                planets.slice(i + 1).forEach(p2 => {
+                    const c1 = getCoords(p1.deg);
+                    const c2 = getCoords(p2.deg);
+                    
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', c1.x);
+                    line.setAttribute('y1', c1.y);
+                    line.setAttribute('x2', c2.x);
+                    line.setAttribute('y2', c2.y);
+                    line.setAttribute('stroke', 'rgba(0, 255, 65, 0.15)');
+                    line.setAttribute('stroke-width', '0.5');
+                    
+                    linesGroup.appendChild(line);
+                });
+            });
+        }
+
+        // Draw planets
+        function drawPlanets() {
+            const planetsGroup = document.getElementById('planets');
+            planetsGroup.innerHTML = '';
+            
+            planets.forEach(planet => {
+                const coords = getCoords(planet.deg);
+                const textCoords = getCoords(planet.deg, 95);
+                
+                // Group for planet
+                const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                
+                // Line to center
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', '100');
+                line.setAttribute('y1', '100');
+                line.setAttribute('x2', coords.x);
+                line.setAttribute('y2', coords.y);
+                line.setAttribute('stroke', planet.color);
+                line.setAttribute('stroke-width', '1');
+                line.setAttribute('opacity', '0.2');
+                g.appendChild(line);
+                
+                // Planet dot
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', coords.x);
+                circle.setAttribute('cy', coords.y);
+                circle.setAttribute('r', '3');
+                circle.setAttribute('fill', '#000');
+                circle.setAttribute('stroke', planet.color);
+                circle.setAttribute('stroke-width', '1.5');
+                circle.classList.add('planet-dot');
+                g.appendChild(circle);
+                
+                // Label
+                const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                text.setAttribute('x', textCoords.x);
+                text.setAttribute('y', textCoords.y);
+                text.setAttribute('fill', planet.color);
+                text.setAttribute('font-size', '8');
+                text.setAttribute('font-family', 'monospace');
+                text.setAttribute('text-anchor', 'middle');
+                text.setAttribute('alignment-baseline', 'middle');
+                text.setAttribute('transform', `rotate(${-rotation} ${textCoords.x} ${textCoords.y})`);
+                text.textContent = planet.name;
+                g.appendChild(text);
+                
+                planetsGroup.appendChild(g);
+            });
+        }
+
+        // Populate planet list
+        function populatePlanetList() {
+            const list = document.getElementById('planet-list');
+            planets.forEach(planet => {
+                const item = document.createElement('div');
+                item.className = 'planet-item';
+                item.innerHTML = `
+                    <div class="planet-color" style="background: ${planet.color}"></div>
+                    <span>${planet.name}: ${planet.deg.toFixed(2)}°</span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        // Animation loop
+        function animate() {
+            rotation += 0.2;
+            const group = document.getElementById('rotating-group');
+            group.setAttribute('transform', `rotate(${rotation} 100 100)`);
+            
+            // Redraw planets to update text rotation
+            drawPlanets();
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize
+        drawLines();
+        drawPlanets();
+        populatePlanetList();
+        animate();
+    </script>
+</body>
+</html>

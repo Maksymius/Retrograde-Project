@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { TypingAnimation } from '@/components/Terminal/TypingAnimation'
+import { AstroRadar } from '@/components/AstroRadar'
 
 interface ResultCardProps {
   date: string
@@ -20,6 +21,15 @@ export function ResultCard({ date, location, apiResponse }: ResultCardProps) {
     entropy: "SYSTEM_ERROR",
     case_id: "RD-500-ERROR"
   }
+
+  // Extract chart data for radar (with fallback mock data)
+  const chartData = data.astral_data?.chart_data || [
+    { name: "SUN", deg: 45, color: "#FFB000" },
+    { name: "MOON", deg: 180, color: "#E0E0E0" },
+    { name: "MARS", deg: 90, color: "#FF3333" },
+    { name: "VEN", deg: 120, color: "#FF3399" },
+    { name: "SAT", deg: 270, color: "#555555" },
+  ]
 
   const displayData = {
     id: data.case_id || `CASE-${Math.floor(Math.random() * 9999).toString().padStart(4, '0')}`,
@@ -107,6 +117,11 @@ export function ResultCard({ date, location, apiResponse }: ResultCardProps) {
               <span className="text-[10px] text-zinc-500 uppercase">Karmic Debt</span>
               <span className="text-yellow-600 font-bold">{displayData.karmicDebt}</span>
             </div>
+          </div>
+
+          {/* ВАУ-ЕФЕКТ: КІБЕРПАНК РАДАР */}
+          <div className={`transition-all duration-1000 ${stage >= 1 ? 'opacity-100 scale-100' : 'opacity-0 scale-90'}`}>
+            <AstroRadar planets={chartData} />
           </div>
 
           {/* 2. Вердикт (Консольний вигляд) */}

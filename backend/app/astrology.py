@@ -1,6 +1,6 @@
 from kerykeion import AstrologicalSubjectFactory, ChartDataFactory
 from datetime import datetime
-from typing import Dict, Optional
+from typing import Dict, Optional, List
 
 # Mapping short names to full zodiac signs
 ZODIAC_MAPPING = {
@@ -18,10 +18,40 @@ ZODIAC_MAPPING = {
     'Pis': 'Pisces'
 }
 
-def calculate_simple(city: str, date_str: str) -> Dict[str, str]:
+def get_planet_data(subject) -> list:
+    """
+    Extract planet positions with degrees for radar chart.
+    Returns list of dicts with name, deg (absolute position), and color.
+    """
+    planets_data = []
+    
+    # Define planets with their colors (cyberpunk theme)
+    planet_config = [
+        ("sun", "SUN", "#FFB000"),      # Yellow
+        ("moon", "MOON", "#E0E0E0"),    # White
+        ("mercury", "MERC", "#00FF41"), # Green
+        ("venus", "VEN", "#FF3399"),    # Pink
+        ("mars", "MARS", "#FF3333"),    # Red
+        ("jupiter", "JUP", "#9D00FF"),  # Purple
+        ("saturn", "SAT", "#555555"),   # Gray
+    ]
+    
+    for attr_name, display_name, color in planet_config:
+        if hasattr(subject, attr_name):
+            planet = getattr(subject, attr_name)
+            if hasattr(planet, 'abs_pos'):
+                planets_data.append({
+                    "name": display_name,
+                    "deg": round(planet.abs_pos, 2),
+                    "color": color
+                })
+    
+    return planets_data
+
+def calculate_simple(city: str, date_str: str) -> Dict:
     """
     Calculate basic astrology data using kerykeion 5.7.0.
-    Returns simple dict with Sun, Moon, Ascendant signs.
+    Returns dict with signs and chart_data for radar visualization.
     """
     try:
         # Parse date string (format: "1991-08-24")
@@ -59,6 +89,9 @@ def calculate_simple(city: str, date_str: str) -> Dict[str, str]:
         # Fallback if we couldn't get all data
         if len(astral_data) < 2:
             raise Exception("Insufficient astral data calculated")
+        
+        # Add chart data for radar visualization
+        astral_data['chart_data'] = get_planet_data(subject)
             
         return astral_data
         
