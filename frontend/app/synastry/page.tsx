@@ -24,7 +24,6 @@ const DOOM_SCENARIOS = [
   { title: "ЦИФРОВИЙ ДЕТОКС", desc: "Ваші аури несумісні з Wi-Fi. Доведеться спілкуватися голосом. Жах.", danger: 28 },
   { title: "ЕКЗИСТЕНЦІЙНИЙ ПЕТЧ", desc: "Разом ви будете постійно шукати сенс життя і не знаходити. Романтично.", danger: 74 }
 ]
-
 function SynastryContent() {
   const searchParams = useSearchParams()
   
@@ -111,16 +110,20 @@ function SynastryContent() {
               />
             </div>
 
-            {/* Іронічна інструкція */}
-            <div className="p-3 bg-zinc-900/30 border-l-2 border-red-500/30 text-left">
-              <p className="text-[10px] text-zinc-500 leading-relaxed font-mono">
-                <span className="text-red-400 font-bold">ІНСТРУКЦІЯ:</span> Створіть пастку для об'єкта романтичного інтересу. 
-                Система проаналізує ваші кармічні борги і видасть вердикт про сумісність. 
-                Увага: результат може призвести до екзистенційної кризи або, навпаки, до одруження.
+           {/* Гонзо-інструкція */}
+            <div className="p-4 bg-zinc-900/50 border-l-2 border-red-500 text-left backdrop-blur-sm">
+              <p className="text-[11px] text-zinc-300 leading-relaxed font-mono tracking-wide">
+                <span className="text-red-500 font-bold uppercase">ПРОТОКОЛ ХИЖАК:</span> 
+                Згенеруйте посилання-приманку. Надішліть об'єкту вашої гормональної залежності. 
+                Система змоделює зіткнення ваших его і розрахує час до повного взаємного знищення.
+                Ви дізнаєтесь, хто ви одне для одного: кармічні партнери чи співкамерники.
               </p>
-              <p className="text-[9px] text-zinc-600 mt-2 italic">
-                "Любов — це тимчасовий збій у роботі егоїстичної програми" — Департамент
-              </p>
+              <div className="mt-3 pt-3 border-t border-dashed border-zinc-700">
+                <p className="text-[10px] text-zinc-500 italic">
+                  "Стосунки — це спільна оренда пекла з правом викупу, якого не існує."
+                  <br/>— Архіваріус, Відділ Розбитих Ілюзій
+                </p>
+              </div>
             </div>
 
             {!inviteLink ? (
@@ -147,10 +150,14 @@ function SynastryContent() {
                 >
                   СКОПІЮВАТИ ОТРУТУ
                 </Button>
-                <p className="text-[10px] text-zinc-600 text-center leading-relaxed">
-                  Надішліть це посилання жертві. <br/>
-                  Коли вона його відкриє, її дата буде автоматично захоплена.<br/>
-                  <span className="text-red-400 italic">Увага: не несемо відповідальності за наслідки.</span>
+                <p className="text-[10px] text-zinc-500 text-center leading-relaxed font-mono mt-3 bg-black/50 p-2 border border-zinc-800">
+                  STATUS: LINK_GENERATED. WAITING_FOR_TARGET.
+                  <br/>
+                  Надішліть посилання. При переході дані партнера будуть синхронізовані з вашим профілем.
+                  <br/>
+                  <span className="text-red-600 font-bold block mt-1">
+                    [!] Результат не підлягає оскарженню.
+                  </span>
                 </p>
               </div>
             )}
@@ -248,12 +255,12 @@ function SynastryContent() {
             </div>
 
             {/* Додаткова інформація */}
-            <div className="text-center space-y-1 pt-2 border-t border-zinc-800">
-              <p className="text-[9px] text-zinc-600 font-mono">
-                Прогноз базується на квантовому аналізі кармічних боргів
+            <div className="text-center space-y-2 pt-4 border-t border-zinc-800/50 mt-4">
+              <p className="text-[10px] text-zinc-600 font-mono uppercase tracking-widest">
+                ALGORITHM: CHAOS_THEORY_V2 // ACCURACY: PAINFUL
               </p>
-              <p className="text-[8px] text-zinc-700 italic">
-                "Кохання — це тимчасовий збій у роботі егоїстичної програми" — Департамент
+              <p className="text-[9px] text-zinc-700">
+                <span className="text-red-900 font-bold">DISCLAIMER:</span> Департамент не несе відповідальності за розбиті серця, меблі та втрачені роки життя.
               </p>
             </div>
 
