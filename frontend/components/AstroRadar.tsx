@@ -7,8 +7,9 @@ interface Planet {
 }
 
 export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
-  const ORBIT_RADIUS = 80
-  const TEXT_RADIUS = 95
+  // ФІКС 1: Зменшені радіуси, щоб текст не вилітав за межі SVG 200x200
+  const ORBIT_RADIUS = 62  // Було 80
+  const TEXT_RADIUS = 82   // Було 95
 
   const getCoords = (deg: number, radius: number) => {
     const rad = (deg - 90) * (Math.PI / 180)
@@ -19,40 +20,42 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
   }
 
   return (
-    <div className="relative w-full aspect-square max-w-[360px] mx-auto my-8 group transition-all duration-700 group-hover:scale-105 group-hover:shadow-[0_0_80px_rgba(0,255,255,0.5)]">
+    // ФІКС 2: Додано p-4 (padding), щоб кути HUD не прилипали до країв
+    <div className="relative w-full aspect-square max-w-[340px] mx-auto my-8 group select-none p-2">
       
-      {/* Cyberpunk background */}
-      <div className="absolute inset-0 rounded-full bg-black/70 backdrop-blur-xl border-4 border-cyan-500/40 shadow-[inset_0_0_60px_rgba(0,255,255,0.15),0_0_60px_rgba(0,255,255,0.4)]" />
+      {/* Background with subtle glow */}
+      <div className="absolute inset-2 rounded-full bg-black/80 backdrop-blur-md border border-cyan-500/30 shadow-[0_0_40px_rgba(0,255,255,0.1)]" />
 
       {/* SVG Radar */}
-      <svg viewBox="0 0 200 200" className="absolute inset-0 w-full h-full z-10 overflow-visible">
+      <svg viewBox="0 0 200 200" className="relative w-full h-full z-10 overflow-visible">
         
         <defs>
-          <filter id="neon-glow" x="-200%" y="-200%" width="400%" height="400%">
-            <feGaussianBlur stdDeviation="3" result="blur"/>
+          <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
             <feMerge>
-              <feMergeNode in="blur"/>
+              <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
         </defs>
 
-        {/* Concentric grid */}
-        <circle cx="100" cy="100" r="30" fill="none" stroke="#00FFFF" strokeWidth="0.5" opacity="0.3" strokeDasharray="4 8" />
-        <circle cx="100" cy="100" r="60" fill="none" stroke="#00FFFF" strokeWidth="1" opacity="0.4" strokeDasharray="6 10" />
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#00FFFF" strokeWidth="2" opacity="0.6" />
+        {/* Concentric grid (Adjusted to new scale) */}
+        <circle cx="100" cy="100" r="25" fill="none" stroke="#00FFFF" strokeWidth="0.5" opacity="0.2" strokeDasharray="2 2" />
+        <circle cx="100" cy="100" r="50" fill="none" stroke="#00FFFF" strokeWidth="0.5" opacity="0.3" strokeDasharray="4 4" />
+        <circle cx="100" cy="100" r="75" fill="none" stroke="#00FFFF" strokeWidth="1" opacity="0.5" />
 
-        {/* Radial spokes (zodiac-style) */}
-        <g opacity="0.4">
+        {/* Radial spokes (zodiac divisions) */}
+        <g opacity="0.2">
           {Array.from({ length: 12 }, (_, i) => i * 30).map((deg) => {
-            const { x, y } = getCoords(deg, 95)
-            return <line key={`spoke-${deg}`} x1="100" y1="100" x2={x} y2={y} stroke="#00FFFF" strokeWidth="1" />
+            const inner = getCoords(deg, 20)
+            const outer = getCoords(deg, 75)
+            return <line key={`spoke-${deg}`} x1={inner.x} y1={inner.y} x2={outer.x} y2={outer.y} stroke="#00FFFF" strokeWidth="0.5" />
           })}
         </g>
 
-        {/* Planets & aspects */}
+        {/* PLANETS & ASPECTS */}
         <g>
-          {/* Aspect lines - magenta neon */}
+          {/* Aspect lines */}
           {planets.map((p1, i) =>
             planets.slice(i + 1).map((p2) => {
               const c1 = getCoords(p1.deg, ORBIT_RADIUS)
@@ -63,9 +66,9 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
                   x1={c1.x} y1={c1.y}
                   x2={c2.x} y2={c2.y}
                   stroke="#FF00FF"
-                  strokeWidth="1"
-                  opacity="0.35"
-                  filter="url(#neon-glow)"
+                  strokeWidth="0.5"
+                  opacity="0.4"
+                  className="animate-pulse"
                 />
               )
             })
@@ -78,28 +81,32 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
 
             return (
               <g key={p.name}>
-                {/* Radial guide */}
-                <line x1="100" y1="100" x2={x} y2={y} stroke={p.color} strokeWidth="1" opacity="0.4" strokeDasharray="4 4" />
+                {/* Connector line */}
+                <line x1="100" y1="100" x2={x} y2={y} stroke={p.color} strokeWidth="0.5" opacity="0.3" strokeDasharray="2 2" />
 
-                {/* Glow halo */}
-                <circle cx={x} cy={y} r="10" fill="none" stroke={p.color} strokeWidth="3" opacity="0.3" className="animate-pulse" />
+                {/* Planet Body */}
+                <circle cx={x} cy={y} r="8" fill={p.color} fillOpacity="0.1" stroke={p.color} strokeWidth="0.5" className="animate-pulse" />
+                <circle cx={x} cy={y} r="3" fill={p.color} filter="url(#neon-glow)" />
+                <circle cx={x} cy={y} r="1" fill="#FFF" />
 
-                {/* Planet core */}
-                <circle cx={x} cy={y} r="5" fill={p.color} opacity="0.9" filter="url(#neon-glow)" />
-                <circle cx={x} cy={y} r="2" fill="#FFFFFF" />
-
-                {/* Label */}
+                {/* Label (ФІКС 3: Paint Order для читабельності на фоні ліній) */}
                 <text
                   x={textCoords.x}
                   y={textCoords.y}
                   fill={p.color}
-                  fontSize="11"
+                  fontSize="9"
                   fontWeight="bold"
                   fontFamily="var(--font-jetbrains-mono)"
                   textAnchor="middle"
                   dominantBaseline="middle"
-                  filter="url(#neon-glow)"
-                  style={{ textShadow: `0 0 10px ${p.color}, 0 0 20px ${p.color}` }}
+                  style={{ 
+                    textShadow: `0 0 8px ${p.color}`,
+                    paintOrder: "stroke",
+                    stroke: "rgba(0,0,0,0.9)", // Чорна обводка навколо літер
+                    strokeWidth: "2px",
+                    strokeLinecap: "round",
+                    strokeLinejoin: "round"
+                  }}
                 >
                   {p.name}
                 </text>
@@ -109,25 +116,25 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
         </g>
 
         {/* Center core */}
-        <circle cx="100" cy="100" r="8" fill="none" stroke="#00FFFF" strokeWidth="3" opacity="0.7" className="animate-pulse" filter="url(#neon-glow)" />
-        <circle cx="100" cy="100" r="3" fill="#00FFFF" opacity="0.9" />
+        <circle cx="100" cy="100" r="4" fill="#000" stroke="#00FFFF" strokeWidth="1" />
+        <circle cx="100" cy="100" r="1.5" fill="#00FFFF" />
       </svg>
 
-      {/* Dual scanner sweeps */}
-      <div className="absolute inset-0 z-20 pointer-events-none rounded-full overflow-hidden">
-        <div className="w-full h-full bg-[conic-gradient(transparent_240deg,rgba(0,255,255,0.25)_360deg)] animate-[spin_4s_linear_infinite]" />
-        <div className="w-full h-full bg-[conic-gradient(transparent_240deg,rgba(255,0,255,0.15)_360deg)] animate-[spin_7s_linear_infinite_reverse]" />
+      {/* SINGLE SCANNER SWEEP (ФІКС 4: Один чистий сканер замість хаосу) */}
+      <div className="absolute inset-2 z-20 pointer-events-none rounded-full overflow-hidden opacity-80">
+        <div className="w-full h-full bg-[conic-gradient(transparent_270deg,rgba(0,255,255,0.1)_360deg)] animate-[spin_4s_linear_infinite]" />
         
+        {/* Leading edge line */}
         <div className="absolute inset-0 animate-[spin_4s_linear_infinite]">
-          <div className="absolute left-1/2 top-0 w-[3px] h-[70%] origin-bottom -translate-x-1/2 bg-gradient-to-b from-transparent via-cyan-300 to-transparent shadow-[0_0_30px_#00FFFF]" />
+          <div className="absolute left-1/2 top-0 w-[1px] h-1/2 origin-bottom -translate-x-1/2 bg-gradient-to-b from-transparent via-cyan-400 to-transparent shadow-[0_0_10px_#00FFFF]" />
         </div>
       </div>
 
-      {/* Cyberpunk HUD corners */}
-      <div className="absolute top-0 left-0 w-24 h-24 border-t-4 border-l-4 border-cyan-400 shadow-[0_0_20px_#00FFFF]" />
-      <div className="absolute top-0 right-0 w-24 h-24 border-t-4 border-r-4 border-cyan-400 shadow-[0_0_20px_#00FFFF]" />
-      <div className="absolute bottom-0 left-0 w-24 h-24 border-b-4 border-l-4 border-cyan-400 shadow-[0_0_20px_#00FFFF]" />
-      <div className="absolute bottom-0 right-0 w-24 h-24 border-b-4 border-r-4 border-cyan-400 shadow-[0_0_20px_#00FFFF]" />
+      {/* Cyberpunk HUD Corners (ФІКС 5: Акуратні кутики) */}
+      <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-sm shadow-[0_0_10px_rgba(0,255,255,0.3)]" />
+      <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-500/50 rounded-tr-sm shadow-[0_0_10px_rgba(0,255,255,0.3)]" />
+      <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-cyan-500/50 rounded-bl-sm shadow-[0_0_10px_rgba(0,255,255,0.3)]" />
+      <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-cyan-500/50 rounded-br-sm shadow-[0_0_10px_rgba(0,255,255,0.3)]" />
     </div>
   )
 }
