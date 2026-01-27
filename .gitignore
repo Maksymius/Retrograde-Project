@@ -36,3 +36,4 @@ frontend/*.log
 # --- DOCKER ---
 .dockerignore
 .env
+_in/bot.md
