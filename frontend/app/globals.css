@@ -124,6 +124,13 @@ body {
   animation: flicker 0.15s infinite linear;
 }
 
+/* Safari emoji override */
+.zodiac-text {
+  font-variant-emoji: text !important;
+  font-feature-settings: "liga" off, "kern" off;
+  text-rendering: geometricPrecision;
+}
+
 .crt-effect {
   position: relative;
 }

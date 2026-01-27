@@ -6,20 +6,20 @@ interface Planet {
   color: string 
 }
 
-// Символи зодіаку (Unicode) - 12 знаків по колу
+// Символи зодіаку (Unicode) - 12 знаків по колу з текстовим селектором
 const ZODIAC_CIRCLE = [
-  { symbol: '♈', name: 'Aries', deg: 0 },
-  { symbol: '♉', name: 'Taurus', deg: 30 },
-  { symbol: '♊', name: 'Gemini', deg: 60 },
-  { symbol: '♋', name: 'Cancer', deg: 90 },
-  { symbol: '♌', name: 'Leo', deg: 120 },
-  { symbol: '♍', name: 'Virgo', deg: 150 },
-  { symbol: '♎', name: 'Libra', deg: 180 },
-  { symbol: '♏', name: 'Scorpio', deg: 210 },
-  { symbol: '♐', name: 'Sagittarius', deg: 240 },
-  { symbol: '♑', name: 'Capricorn', deg: 270 },
-  { symbol: '♒', name: 'Aquarius', deg: 300 },
-  { symbol: '♓', name: 'Pisces', deg: 330 }
+  { symbol: '♈\uFE0E', name: 'Aries', deg: 0 },
+  { symbol: '♉\uFE0E', name: 'Taurus', deg: 30 },
+  { symbol: '♊\uFE0E', name: 'Gemini', deg: 60 },
+  { symbol: '♋\uFE0E', name: 'Cancer', deg: 90 },
+  { symbol: '♌\uFE0E', name: 'Leo', deg: 120 },
+  { symbol: '♍\uFE0E', name: 'Virgo', deg: 150 },
+  { symbol: '♎\uFE0E', name: 'Libra', deg: 180 },
+  { symbol: '♏\uFE0E', name: 'Scorpio', deg: 210 },
+  { symbol: '♐\uFE0E', name: 'Sagittarius', deg: 240 },
+  { symbol: '♑\uFE0E', name: 'Capricorn', deg: 270 },
+  { symbol: '♒\uFE0E', name: 'Aquarius', deg: 300 },
+  { symbol: '♓\uFE0E', name: 'Pisces', deg: 330 }
 ]
 
 export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
@@ -92,13 +92,13 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
                 x={zodiacPos.x}
                 y={zodiacPos.y}
                 fill="currentColor"
-                fontSize="12"
+                fontSize="14"
                 textAnchor="middle"
                 dominantBaseline="middle"
                 className="opacity-30"
                 style={{
-                  textShadow: '0 0 3px rgba(0,0,0,0.8)',
-                  fontFamily: 'var(--font-family-symbols)',
+                  // Unicode Variation Selector (\uFE0E) робить основну роботу
+                  fontFamily: '"JetBrains Mono", monospace, "Apple Color Emoji"',
                   fontVariantEmoji: 'text'
                 }}
               >
