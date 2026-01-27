@@ -8,6 +8,7 @@ import { GlitchEffect } from '@/components/Terminal/GlitchEffect'
 import { SoundIndicator } from '@/components/Terminal/SoundIndicator'
 import { ResultCard } from '@/components/ResultCard'
 import { SciFiBackground } from '@/components/Terminal/SciFiBackground'
+import Link from 'next/link'
 
 export default function HomePage() {
   const [input, setInput] = useState('')
@@ -172,8 +173,8 @@ export default function HomePage() {
           
           <GlitchEffect trigger={glitchTrigger} intensity="medium">
             <div className="text-center space-y-2 md:space-y-4 mt-16 sm:mt-20 md:mt-24">
-              {/* Header Info */}
-              <div className="font-mono text-green-400 text-[10px] sm:text-xs tracking-widest opacity-70 px-2 h-6">
+              {/* Header Info with Archivist Link */}
+              <div className="font-mono text-green-400 text-[10px] sm:text-xs tracking-widest opacity-70 px-2 h-6 flex items-center justify-center gap-4">
                 {!showWelcome ? (
                   <TypingAnimation 
                     text="RETROGRADE INTERFACE v2.1.4 // LOADING..."
@@ -181,9 +182,48 @@ export default function HomePage() {
                     onComplete={() => setShowWelcome(true)}
                   />
                 ) : (
-                  <span className={isConnecting ? 'terminal-flicker' : ''}>
-                    RETROGRADE INTERFACE v2.1.4 // READY
-                  </span>
+                  <>
+                    <span className={isConnecting ? 'terminal-flicker' : ''}>
+                      RETROGRADE INTERFACE v2.1.4 // READY
+                    </span>
+                    
+                    {/* Archivist Access Link */}
+                    <Link 
+                      href="/archivist"
+                      className="
+                        group relative inline-flex items-center gap-1
+                        text-purple-500 hover:text-purple-300
+                        border border-purple-500/30 hover:border-purple-400
+                        px-2 py-0.5 rounded-sm
+                        transition-all duration-300
+                        hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]
+                        hover:bg-purple-950/20
+                        animate-pulse hover:animate-none
+                      "
+                      onClick={() => triggerGlitch()}
+                    >
+                      <span className="text-[8px] sm:text-[9px] tracking-wider font-bold">
+                        [ORACLE]
+                      </span>
+                      <svg 
+                        className="w-2 h-2 group-hover:translate-x-0.5 transition-transform" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                      </svg>
+                      
+                      {/* Glitch effect on hover */}
+                      <span 
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                        style={{
+                          background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.1), transparent)',
+                          animation: 'glitch-slide 0.3s infinite'
+                        }}
+                      />
+                    </Link>
+                  </>
                 )}
               </div>
               
