@@ -6,82 +6,112 @@ interface Planet {
   color: string 
 }
 
+// Символи зодіаку (Unicode) - 12 знаків по колу
+const ZODIAC_CIRCLE = [
+  { symbol: '♈', name: 'Aries', deg: 0 },
+  { symbol: '♉', name: 'Taurus', deg: 30 },
+  { symbol: '♊', name: 'Gemini', deg: 60 },
+  { symbol: '♋', name: 'Cancer', deg: 90 },
+  { symbol: '♌', name: 'Leo', deg: 120 },
+  { symbol: '♍', name: 'Virgo', deg: 150 },
+  { symbol: '♎', name: 'Libra', deg: 180 },
+  { symbol: '♏', name: 'Scorpio', deg: 210 },
+  { symbol: '♐', name: 'Sagittarius', deg: 240 },
+  { symbol: '♑', name: 'Capricorn', deg: 270 },
+  { symbol: '♒', name: 'Aquarius', deg: 300 },
+  { symbol: '♓', name: 'Pisces', deg: 330 }
+]
+
 export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
   
-  // НАЛАШТУВАННЯ МАСШТАБУ
-  // Зменшуємо радіуси, щоб текст не вилазив за рамки 200x200
-  const ORBIT_RADIUS = 65; // Було 80. Радіус, де стоять планети
-  const TEXT_RADIUS_BASE = 82;  // Базовий радіус тексту
+  // НАЛАШТУВАННЯ
+  const VIEW_SIZE = 300
+  const CENTER = VIEW_SIZE / 2
+  
+  const GRID_RADIUS = 80      // Радіус самої сітки радара
+  const PLANET_RADIUS = 80    // Планети на краю сітки
+  const TEXT_RADIUS = 115     // Текст винесений за межі
 
-  // Математика координат (Центр 100,100)
+  // Математика координат
   const getCoords = (deg: number, radius: number) => {
     const rad = (deg - 90) * (Math.PI / 180)
     return {
-      x: 100 + radius * Math.cos(rad),
-      y: 100 + radius * Math.sin(rad)
+      x: CENTER + radius * Math.cos(rad),
+      y: CENTER + radius * Math.sin(rad)
     }
   }
 
-  // Функція для визначення чи близько планети одна до одної
-  const getTextRadius = (currentDeg: number, index: number) => {
-    // Перевіряємо чи є сусідні планети в радіусі 30 градусів
-    const hasNearbyPlanet = planets.some((p, i) => {
-      if (i === index) return false
-      const diff = Math.abs(currentDeg - p.deg)
-      const minDiff = Math.min(diff, 360 - diff) // враховуємо циклічність
-      return minDiff < 30
-    })
-    
-    // Якщо є сусіди - зміщуємо текст далі/ближче залежно від індексу
-    if (hasNearbyPlanet) {
-      return index % 2 === 0 ? TEXT_RADIUS_BASE + 8 : TEXT_RADIUS_BASE - 8
-    }
-    return TEXT_RADIUS_BASE
-  }
+  // Сортуємо планети за кутом
+  const sortedPlanets = [...planets].sort((a, b) => a.deg - b.deg)
 
-  // Функція для визначення anchor залежно від позиції
-  const getTextAnchor = (deg: number): "start" | "middle" | "end" => {
-    const normalizedDeg = ((deg % 360) + 360) % 360
-    if (normalizedDeg > 45 && normalizedDeg < 135) return "start"
-    if (normalizedDeg > 225 && normalizedDeg < 315) return "end"
+  // Розумне вирівнювання тексту
+  const getTextAnchor = (deg: number) => {
+    const d = ((deg % 360) + 360) % 360
+    if (d > 190 && d < 350) return "end"
+    if (d > 10 && d < 170) return "start"
     return "middle"
   }
 
-  // Функція для вертикального вирівнювання
-  const getAlignmentBaseline = (deg: number): "hanging" | "middle" | "baseline" => {
-    const normalizedDeg = ((deg % 360) + 360) % 360
-    if (normalizedDeg > 315 || normalizedDeg < 45) return "baseline"
-    if (normalizedDeg > 135 && normalizedDeg < 225) return "hanging"
-    return "middle"
+  // Вертикальне вирівнювання
+  const getBaseline = (deg: number) => {
+    const d = ((deg % 360) + 360) % 360
+    if (d > 90 && d < 270) return "hanging"
+    return "auto" 
   }
 
   return (
-    // Додаємо p-2 (padding), щоб гарантувати відступ від країв батьківського блоку
-    <div className="relative w-full aspect-square max-w-[320px] mx-auto my-8 group p-2">
+    <div className="relative w-full aspect-square max-w-[360px] mx-auto my-8 group">
       
-      {/* --- 1. ФОНОВИЙ ШАР (Background) --- */}
-      {/* inset-2, щоб фон співпадав з новим розміром сітки */}
-      <div className="absolute inset-2 rounded-full border border-retro-border/50 shadow-[0_0_20px_rgba(0,0,0,0.5)] bg-black/40 backdrop-blur-sm" />
-      
-      {/* --- 2. SVG (Статичні дані) --- */}
-      <svg viewBox="0 0 200 200" className="w-full h-full relative z-10 overflow-visible">
-        
-        {/* Сітка прицілу (ЗМЕНШЕНІ РАДІУСИ: 25, 50, 75) */}
-        <circle cx="100" cy="100" r="25" fill="none" stroke="#333" strokeWidth="0.5" strokeDasharray="2 2" />
-        <circle cx="100" cy="100" r="50" fill="none" stroke="#333" strokeWidth="0.5" strokeDasharray="4 4" />
-        <circle cx="100" cy="100" r="75" fill="none" stroke="#444" strokeWidth="1" />
-        
-        {/* Хрестовина (трохи коротша, щоб не впиралась в край) */}
-        <line x1="100" y1="20" x2="100" y2="180" stroke="#222" strokeWidth="1" />
-        <line x1="20" y1="100" x2="180" y2="100" stroke="#222" strokeWidth="1" />
+      {/* 1. ACID BACKGROUND GLOW */}
+      <div className="absolute inset-[10%] rounded-full bg-green-500/5 blur-[50px] animate-pulse" />
+      <div className="absolute inset-[20%] rounded-full border border-green-500/20 shadow-[0_0_30px_rgba(0,255,0,0.1)]" />
 
-        {/* ГРУПА ПЛАНЕТ */}
+      {/* 2. SVG SCENE */}
+      <svg viewBox={`0 0 ${VIEW_SIZE} ${VIEW_SIZE}`} className="w-full h-full relative z-10 overflow-visible font-mono">
+        
+        {/* --- СІТКА РАДАРА (Пунктири) --- */}
+        <g className="text-zinc-600">
+            {/* Зовнішнє кільце */}
+            <circle cx={CENTER} cy={CENTER} r={GRID_RADIUS} fill="none" stroke="currentColor" strokeWidth="1" />
+            {/* Внутрішні пунктирні кільця */}
+            <circle cx={CENTER} cy={CENTER} r={GRID_RADIUS * 0.66} fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" />
+            <circle cx={CENTER} cy={CENTER} r={GRID_RADIUS * 0.33} fill="none" stroke="currentColor" strokeWidth="0.5" strokeDasharray="2 2" />
+            
+            {/* Хрестовина */}
+            <line x1={CENTER} y1={CENTER - GRID_RADIUS} x2={CENTER} y2={CENTER + GRID_RADIUS} stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.5" />
+            <line x1={CENTER - GRID_RADIUS} y1={CENTER} x2={CENTER + GRID_RADIUS} y2={CENTER} stroke="currentColor" strokeWidth="0.5" strokeDasharray="4 4" opacity="0.5" />
+        </g>
+
+        {/* --- ЗНАКИ ЗОДІАКУ ПО КОЛУ --- */}
+        <g className="text-zinc-500">
+          {ZODIAC_CIRCLE.map((zodiac, i) => {
+            const zodiacPos = getCoords(zodiac.deg, GRID_RADIUS + 15)
+            return (
+              <text
+                key={i}
+                x={zodiacPos.x}
+                y={zodiacPos.y}
+                fill="currentColor"
+                fontSize="14"
+                textAnchor="middle"
+                dominantBaseline="middle"
+                className="opacity-40"
+                style={{
+                  textShadow: '0 0 3px rgba(0,0,0,0.8)'
+                }}
+              >
+                {zodiac.symbol}
+              </text>
+            )
+          })}
+        </g>
+
+        {/* --- АСПЕКТИ (Лінії між планетами) --- */}
         <g>
-          {/* Аспекти */}
-          {planets.map((p1, i) => (
-            planets.slice(i + 1).map((p2, j) => {
-              const c1 = getCoords(p1.deg, ORBIT_RADIUS)
-              const c2 = getCoords(p2.deg, ORBIT_RADIUS)
+          {sortedPlanets.map((p1, i) => (
+            sortedPlanets.slice(i + 1).map((p2, j) => {
+              const c1 = getCoords(p1.deg, PLANET_RADIUS)
+              const c2 = getCoords(p2.deg, PLANET_RADIUS)
               return (
                 <line 
                   key={`link-${i}-${j}`}
@@ -94,65 +124,75 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
               )
             })
           ))}
+        </g>
 
-          {/* Планети */}
-          {planets.map((p, i) => {
-            const { x, y } = getCoords(p.deg, ORBIT_RADIUS)
-            const textRadius = getTextRadius(p.deg, i)
-            const textCoords = getCoords(p.deg, textRadius)
-            const textAnchor = getTextAnchor(p.deg)
-            const alignmentBaseline = getAlignmentBaseline(p.deg)
-            
+        {/* --- ПЛАНЕТИ --- */}
+        {sortedPlanets.map((p, i) => {
+            const planetPos = getCoords(p.deg, PLANET_RADIUS)
+            const textPos = getCoords(p.deg, TEXT_RADIUS)
+            const anchor = getTextAnchor(p.deg)
+            const baseline = getBaseline(p.deg)
+
             return (
-              <g key={`planet-${i}`}>
-                {/* Пунктир від центру */}
-                <line x1="100" y1="100" x2={x} y2={y} stroke={p.color} strokeWidth="0.5" opacity="0.3" strokeDasharray="2 2" />
+              <g key={i} className="group/item">
                 
-                {/* Точка планети */}
-                <circle cx={x} cy={y} r="4" fill={p.color} fillOpacity="0.2" className="animate-pulse" />
-                <circle cx={x} cy={y} r="1.5" fill="#fff" />
-                
-                {/* Підпис */}
+                {/* A. ЛІНІЯ ВІД ЦЕНТРУ (Пунктирна) */}
+                <line 
+                    x1={CENTER} y1={CENTER} 
+                    x2={planetPos.x} y2={planetPos.y} 
+                    stroke={p.color} 
+                    strokeWidth="1" 
+                    strokeDasharray="3 3"
+                    className="opacity-40 group-hover/item:opacity-100 transition-opacity" 
+                />
+
+                {/* B. "ВУСИК" ДО ТЕКСТУ */}
+                <line 
+                    x1={planetPos.x} y1={planetPos.y} 
+                    x2={textPos.x} y2={textPos.y} 
+                    stroke={p.color} 
+                    strokeWidth="0.5" 
+                    className="opacity-30"
+                />
+
+                {/* C. ПЛАНЕТА (Яскрава точка) */}
+                <circle cx={planetPos.x} cy={planetPos.y} r="6" fill={p.color} fillOpacity="0.3" className="animate-pulse" />
+                <circle cx={planetPos.x} cy={planetPos.y} r="2.5" fill={p.color} stroke="black" strokeWidth="0.5" />
+
+                {/* D. ТЕКСТ */}
                 <text 
-                  x={textCoords.x} 
-                  y={textCoords.y} 
+                  x={textPos.x} 
+                  y={textPos.y} 
                   fill={p.color} 
-                  fontSize="8" 
+                  fontSize="9" 
                   fontWeight="bold"
-                  fontFamily="var(--font-jetbrains-mono)" 
-                  textAnchor={textAnchor}
-                  alignmentBaseline={alignmentBaseline}
-                  style={{ 
-                    textShadow: `0 0 10px ${p.color}`,
-                    // Додаткова страховка: фон під текстом, щоб читалось на лініях
-                    paintOrder: "stroke",
-                    stroke: "rgba(0,0,0,0.8)",
-                    strokeWidth: "2px",
-                    strokeLinecap: "round",
-                    strokeLinejoin: "round"
+                  textAnchor={anchor}
+                  dominantBaseline={baseline}
+                  className="uppercase tracking-widest drop-shadow-[0_0_8px_rgba(0,0,0,1)]"
+                  style={{
+                    textShadow: `0 0 5px ${p.color}`,
                   }}
                 >
                   {p.name}
                 </text>
               </g>
             )
-          })}
+        })}
+
+        {/* --- ЦЕНТР (Приціл) --- */}
+        <g className="text-green-500 animate-[spin_10s_linear_infinite]">
+             <rect x={CENTER - 3} y={CENTER - 3} width="6" height="6" stroke="currentColor" strokeWidth="1" fill="none" />
+             <line x1={CENTER} y1={CENTER-6} x2={CENTER} y2={CENTER+6} stroke="currentColor" strokeWidth="1" />
+             <line x1={CENTER-6} y1={CENTER} x2={CENTER+6} y2={CENTER} stroke="currentColor" strokeWidth="1" />
         </g>
-        
-        {/* Центр */}
-        <circle cx="100" cy="100" r="2" fill="#fff" />
       </svg>
       
-      {/* --- 3. СКАНЕР --- */}
-      {/* inset-2 також тут, щоб сканер ходив чітко по зовнішньому колу сітки */}
-      <div className="absolute inset-2 z-20 pointer-events-none rounded-full overflow-hidden">
-         <div className="w-full h-full bg-[conic-gradient(transparent_270deg,rgba(0,255,65,0.15)_360deg)] animate-[spin_4s_linear_infinite]" />
-         <div className="absolute inset-0 animate-[spin_4s_linear_infinite]">
-            <div className="h-1/2 w-[1px] bg-retro-accent/50 absolute left-1/2 top-0 origin-bottom shadow-[0_0_10px_#00FF41]" />
-         </div>
+      {/* 3. СКАНЕР (Оверлей) */}
+      <div className="absolute inset-[15%] rounded-full overflow-hidden pointer-events-none mix-blend-screen opacity-60">
+         <div className="w-full h-full bg-[conic-gradient(transparent_270deg,rgba(0,255,0,0.3)_360deg)] animate-[spin_3s_linear_infinite]" />
       </div>
 
-      {/* Декоративні кутики (зовнішні) */}
+       {/* Декор кутів (наші, не зелені) */}
        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-retro-text/30" />
        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-retro-text/30" />
        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-retro-text/30" />
