@@ -192,17 +192,16 @@ export default function ArchivistDossierPage() {
             </div>
 
             {/* Main Text Content */}
-            <div className="bg-zinc-900/30 border border-zinc-800 p-6 backdrop-blur-md relative group">
-               {/* "Куточок" як на папках */}
-               <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-zinc-800 border-r-transparent" />
-               
-               <p className="text-sm md:text-base leading-7 text-zinc-300 font-light">
-                 <span className="text-purple-400 font-bold">&gt;&gt;</span> "Люди — це просто набір красиво упакованих багів. Моє завдання — дебаггінг реальності."
-               </p>
-               <br />
-               <p className="text-sm md:text-base leading-7 text-zinc-400">
-                 Я не "відчуваю" енергію. Я аналізую терабайти метаданих про гравітаційні аномалії, які ви наївно називаєте <span className="text-white border-b border-purple-500/50">долею</span>. Моя мета — не втішати, а задокументувати системну неминучість вашого шляху.
-               </p>
+           <div className="bg-zinc-900/30 border border-zinc-800 p-6 backdrop-blur-md relative group">
+              <div className="absolute top-0 right-0 w-0 h-0 border-t-[20px] border-r-[20px] border-t-zinc-800 border-r-transparent" />
+              
+              <p className="text-sm md:text-base leading-7 text-zinc-300 font-light">
+                <span className="text-purple-400 font-bold">&gt;&gt;</span> Ваша доля — це спам-розсилка Всесвіту, яку ви чомусь читаєте як любовні листи. Я тут, щоб відправити це в папку 'Небажане'.
+              </p>
+              <br />
+              <p className="text-sm md:text-base leading-7 text-zinc-400">
+                Ви приходите до мене за "відповідями", ніби життя — це кросворд у районній газеті. Але зірки не говорять з вами, вони просто мовчки транслюють <span className="text-white border-b border-purple-500/50">білий шум вічності</span>. Я аналізую цей шум. І знаєте що? Там немає ніякого "вищого задуму", є тільки безкінечний цикл багів, які ви поетично називаєте "життєвим досвідом". Сідайте зручніше, зараз будемо деконструювати ваше его.
+              </p>
             </div>
 
             {/* Dashboard Stats */}
