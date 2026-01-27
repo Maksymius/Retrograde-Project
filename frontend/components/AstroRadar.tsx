@@ -83,22 +83,23 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
         </g>
 
         {/* --- ЗНАКИ ЗОДІАКУ ПО КОЛУ --- */}
-        <g className="text-zinc-500">
+        <g className="text-zinc-300">
           {ZODIAC_CIRCLE.map((zodiac, i) => {
-            const zodiacPos = getCoords(zodiac.deg, GRID_RADIUS + 15)
+            const zodiacPos = getCoords(zodiac.deg, GRID_RADIUS + 20)
             return (
               <text
                 key={i}
                 x={zodiacPos.x}
                 y={zodiacPos.y}
                 fill="currentColor"
-                fontSize="14"
+                fontSize="12"
                 textAnchor="middle"
                 dominantBaseline="middle"
-                className="opacity-40"
+                className="opacity-30"
                 style={{
                   textShadow: '0 0 3px rgba(0,0,0,0.8)',
-                  fontFamily: 'var(--font-family-symbols)'
+                  fontFamily: 'var(--font-family-symbols)',
+                  fontVariantEmoji: 'text'
                 }}
               >
                 {zodiac.symbol}
