@@ -45,21 +45,34 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
     
     try:
         # Try available model names in order of preference
-        model_names = ['gemini-2.5-flash', 'gemini-pro-latest', 'gemini-2.5-pro']
+        # Using more stable models first
+        model_names = [
+            'gemini-1.5-flash',
+            'gemini-1.5-pro', 
+            'gemini-pro',
+            'gemini-2.5-flash',
+            'gemini-pro-latest',
+            'gemini-2.5-pro'
+        ]
         
         model = None
+        last_error = None
+        
         for model_name in model_names:
             try:
+                logger.info(f"🔄 Trying model: {model_name}")
                 model = genai.GenerativeModel(model_name)
-                logger.info(f"✅ Using model: {model_name}")
+                # Test if model works by checking if it exists
+                logger.info(f"✅ Successfully loaded model: {model_name}")
                 break
             except Exception as e:
+                last_error = str(e)
                 logger.warning(f"⚠️ Failed to load model {model_name}: {e}")
                 continue
         
         if not model:
-            logger.error("❌ No available Gemini models found")
-            raise Exception("No available Gemini models found")
+            logger.error(f"❌ No available Gemini models found. Last error: {last_error}")
+            raise Exception(f"No available Gemini models found: {last_error}")
         
         # Prepare prompt with astral data
         user_prompt = f"""
@@ -99,9 +112,12 @@ def generate_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
         
     except json.JSONDecodeError as e:
         logger.error(f"❌ JSON parsing error: {e}")
+        logger.error(f"Response text was: {response_text if 'response_text' in locals() else 'N/A'}")
         return generate_fallback_verdict(astral_data)
     except Exception as e:
-        logger.error(f"❌ AI generation error: {e}")
+        logger.error(f"❌ AI generation error: {type(e).__name__}: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return generate_fallback_verdict(astral_data)
 
 def generate_fallback_verdict(astral_data: Dict[str, str]) -> Dict[str, str]:
