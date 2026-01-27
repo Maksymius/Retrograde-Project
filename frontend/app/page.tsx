@@ -187,42 +187,80 @@ export default function HomePage() {
                       RETROGRADE INTERFACE v2.1.4 // READY
                     </span>
                     
-                    {/* Archivist Access Link */}
-                    <Link 
-                      href="/archivist"
-                      className="
-                        group relative inline-flex items-center gap-1
-                        text-purple-500 hover:text-purple-300
-                        border border-purple-500/30 hover:border-purple-400
-                        px-2 py-0.5 rounded-sm
-                        transition-all duration-300
-                        hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]
-                        hover:bg-purple-950/20
-                        animate-pulse hover:animate-none
-                      "
-                      onClick={() => triggerGlitch()}
-                    >
-                      <span className="text-[8px] sm:text-[9px] tracking-wider font-bold">
-                        [ORACLE]
-                      </span>
-                      <svg 
-                        className="w-2 h-2 group-hover:translate-x-0.5 transition-transform" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
+                    {/* Navigation Links */}
+                    <div className="flex gap-2">
+                      <Link 
+                        href="/archivist"
+                        className="
+                          group relative inline-flex items-center gap-1
+                          text-purple-500 hover:text-purple-300
+                          border border-purple-500/30 hover:border-purple-400
+                          px-2 py-0.5 rounded-sm
+                          transition-all duration-300
+                          hover:shadow-[0_0_15px_rgba(168,85,247,0.3)]
+                          hover:bg-purple-950/20
+                          animate-pulse hover:animate-none
+                        "
+                        onClick={() => triggerGlitch()}
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
-                      </svg>
-                      
-                      {/* Glitch effect on hover */}
-                      <span 
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                        style={{
-                          background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.1), transparent)',
-                          animation: 'glitch-slide 0.3s infinite'
-                        }}
-                      />
-                    </Link>
+                        <span className="text-[8px] sm:text-[9px] tracking-wider font-bold">
+                          [ORACLE]
+                        </span>
+                        <svg 
+                          className="w-2 h-2 group-hover:translate-x-0.5 transition-transform" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                        </svg>
+                        
+                        {/* Glitch effect on hover */}
+                        <span 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          style={{
+                            background: 'linear-gradient(90deg, transparent, rgba(168,85,247,0.1), transparent)',
+                            animation: 'glitch-slide 0.3s infinite'
+                          }}
+                        />
+                      </Link>
+
+                      <Link 
+                        href="/entity"
+                        className="
+                          group relative inline-flex items-center gap-1
+                          text-cyan-500 hover:text-cyan-300
+                          border border-cyan-500/30 hover:border-cyan-400
+                          px-2 py-0.5 rounded-sm
+                          transition-all duration-300
+                          hover:shadow-[0_0_15px_rgba(6,182,212,0.3)]
+                          hover:bg-cyan-950/20
+                          animate-pulse hover:animate-none
+                        "
+                        onClick={() => triggerGlitch()}
+                      >
+                        <span className="text-[8px] sm:text-[9px] tracking-wider font-bold">
+                          [SOUL_ID]
+                        </span>
+                        <svg 
+                          className="w-2 h-2 group-hover:translate-x-0.5 transition-transform" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                        </svg>
+                        
+                        {/* Glitch effect on hover */}
+                        <span 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          style={{
+                            background: 'linear-gradient(90deg, transparent, rgba(6,182,212,0.1), transparent)',
+                            animation: 'glitch-slide 0.3s infinite'
+                          }}
+                        />
+                      </Link>
+                    </div>
                   </>
                 )}
               </div>
