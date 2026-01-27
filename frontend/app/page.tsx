@@ -296,6 +296,42 @@ export default function HomePage() {
                           }}
                         />
                       </Link>
+
+                      <Link 
+                        href="/synastry"
+                        className="
+                          group relative inline-flex items-center gap-1
+                          text-red-500 hover:text-red-300
+                          border border-red-500/30 hover:border-red-400
+                          px-2 py-0.5 rounded-sm
+                          transition-all duration-300
+                          hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]
+                          hover:bg-red-950/20
+                          animate-pulse hover:animate-none
+                        "
+                        onClick={() => triggerGlitch()}
+                      >
+                        <span className="text-[8px] sm:text-[9px] tracking-wider font-bold">
+                          [TOXIC]
+                        </span>
+                        <svg 
+                          className="w-2 h-2 group-hover:translate-x-0.5 transition-transform" 
+                          fill="none" 
+                          viewBox="0 0 24 24" 
+                          stroke="currentColor"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                        </svg>
+                        
+                        {/* Glitch effect on hover */}
+                        <span 
+                          className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                          style={{
+                            background: 'linear-gradient(90deg, transparent, rgba(239,68,68,0.1), transparent)',
+                            animation: 'glitch-slide 0.3s infinite'
+                          }}
+                        />
+                      </Link>
                     </div>
                   </>
                 )}
