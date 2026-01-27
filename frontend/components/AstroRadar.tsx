@@ -10,7 +10,7 @@ interface Planet {
 
 export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
   const [rotation, setRotation] = useState(0)
-  const reqRef = useRef<number>()
+  const reqRef = useRef<number | null>(null)
 
   // 1. Оптимізована анімація (60 FPS замість setInterval)
   useEffect(() => {
@@ -19,7 +19,9 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
       reqRef.current = requestAnimationFrame(animate)
     }
     reqRef.current = requestAnimationFrame(animate)
-    return () => cancelAnimationFrame(reqRef.current!)
+    return () => {
+      if (reqRef.current) cancelAnimationFrame(reqRef.current)
+    }
   }, [])
 
   // Математика координат
