@@ -97,7 +97,8 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
                 dominantBaseline="middle"
                 className="opacity-40"
                 style={{
-                  textShadow: '0 0 3px rgba(0,0,0,0.8)'
+                  textShadow: '0 0 3px rgba(0,0,0,0.8)',
+                  fontFamily: 'var(--font-family-symbols)'
                 }}
               >
                 {zodiac.symbol}
