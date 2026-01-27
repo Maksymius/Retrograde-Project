@@ -171,7 +171,7 @@ export default function HomePage() {
         <div className="w-full max-w-2xl space-y-4 sm:space-y-8 my-auto">
           
           <GlitchEffect trigger={glitchTrigger} intensity="medium">
-            <div className="text-center space-y-2 md:space-y-4 mt-8 md:mt-0">
+            <div className="text-center space-y-2 md:space-y-4 mt-16 sm:mt-20 md:mt-24">
               {/* Header Info */}
               <div className="font-mono text-green-400 text-[10px] sm:text-xs tracking-widest opacity-70 px-2 h-6">
                 {!showWelcome ? (
@@ -189,10 +189,45 @@ export default function HomePage() {
               
               {showWelcome && !showResult && (
                 <div className="space-y-1 mix-blend-screen animate-in fade-in duration-1000">
-                  {/* Fluid typography for main title */}
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-amber-500 tracking-tighter leading-none">
-                    RETROGRADE
-                  </h1>
+                  {/* Fluid typography for main title with retro effects */}
+                  <div className="relative inline-block w-full">
+                    {/* Glitch layers */}
+                    <h1 
+                      className="absolute inset-0 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-red-500/20 tracking-tighter leading-none blur-[1px]"
+                      style={{ transform: 'translate(-2px, -2px)' }}
+                      aria-hidden="true"
+                    >
+                      RETROGRADE
+                    </h1>
+                    <h1 
+                      className="absolute inset-0 text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-serif font-bold text-cyan-500/20 tracking-tighter leading-none blur-[1px]"
+                      style={{ transform: 'translate(2px, 2px)' }}
+                      aria-hidden="true"
+                    >
+                      RETROGRADE
+                    </h1>
+                    
+                    {/* Main title with effects */}
+                    <h1 className="
+                      relative text-4xl sm:text-5xl md:text-6xl lg:text-7xl 
+                      font-serif font-bold text-amber-500 
+                      tracking-tighter leading-none
+                      drop-shadow-[0_0_20px_rgba(255,176,0,0.5)]
+                      [text-shadow:_0_0_30px_rgb(255_176_0_/_40%),_0_0_60px_rgb(255_176_0_/_20%)]
+                      animate-pulse
+                      bg-gradient-to-b from-amber-400 via-amber-500 to-amber-600
+                      bg-clip-text text-transparent
+                      hover:scale-105 transition-transform duration-300
+                    ">
+                      RETROGRADE
+                    </h1>
+                    
+                    {/* Scanline overlay */}
+                    <div className="absolute inset-0 pointer-events-none opacity-30 mix-blend-overlay">
+                      <div className="w-full h-full bg-[linear-gradient(transparent_50%,rgba(0,255,65,0.1)_50%)] bg-[length:100%_4px]"></div>
+                    </div>
+                  </div>
+                  
                   <p className="text-zinc-500 font-mono text-[9px] sm:text-[10px] md:text-xs uppercase tracking-[0.25em] px-2">
                      Dept. of Celestial Bureaucracy
                   </p>

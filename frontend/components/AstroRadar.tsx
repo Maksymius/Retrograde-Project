@@ -11,7 +11,7 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
   // НАЛАШТУВАННЯ МАСШТАБУ
   // Зменшуємо радіуси, щоб текст не вилазив за рамки 200x200
   const ORBIT_RADIUS = 65; // Було 80. Радіус, де стоять планети
-  const TEXT_RADIUS = 82;  // Було 105. Радіус тексту (ближче до центру)
+  const TEXT_RADIUS_BASE = 82;  // Базовий радіус тексту
 
   // Математика координат (Центр 100,100)
   const getCoords = (deg: number, radius: number) => {
@@ -20,6 +20,39 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
       x: 100 + radius * Math.cos(rad),
       y: 100 + radius * Math.sin(rad)
     }
+  }
+
+  // Функція для визначення чи близько планети одна до одної
+  const getTextRadius = (currentDeg: number, index: number) => {
+    // Перевіряємо чи є сусідні планети в радіусі 30 градусів
+    const hasNearbyPlanet = planets.some((p, i) => {
+      if (i === index) return false
+      const diff = Math.abs(currentDeg - p.deg)
+      const minDiff = Math.min(diff, 360 - diff) // враховуємо циклічність
+      return minDiff < 30
+    })
+    
+    // Якщо є сусіди - зміщуємо текст далі/ближче залежно від індексу
+    if (hasNearbyPlanet) {
+      return index % 2 === 0 ? TEXT_RADIUS_BASE + 8 : TEXT_RADIUS_BASE - 8
+    }
+    return TEXT_RADIUS_BASE
+  }
+
+  // Функція для визначення anchor залежно від позиції
+  const getTextAnchor = (deg: number): "start" | "middle" | "end" => {
+    const normalizedDeg = ((deg % 360) + 360) % 360
+    if (normalizedDeg > 45 && normalizedDeg < 135) return "start"
+    if (normalizedDeg > 225 && normalizedDeg < 315) return "end"
+    return "middle"
+  }
+
+  // Функція для вертикального вирівнювання
+  const getAlignmentBaseline = (deg: number): "hanging" | "middle" | "baseline" => {
+    const normalizedDeg = ((deg % 360) + 360) % 360
+    if (normalizedDeg > 315 || normalizedDeg < 45) return "baseline"
+    if (normalizedDeg > 135 && normalizedDeg < 225) return "hanging"
+    return "middle"
   }
 
   return (
@@ -65,7 +98,10 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
           {/* Планети */}
           {planets.map((p, i) => {
             const { x, y } = getCoords(p.deg, ORBIT_RADIUS)
-            const textCoords = getCoords(p.deg, TEXT_RADIUS) 
+            const textRadius = getTextRadius(p.deg, i)
+            const textCoords = getCoords(p.deg, textRadius)
+            const textAnchor = getTextAnchor(p.deg)
+            const alignmentBaseline = getAlignmentBaseline(p.deg)
             
             return (
               <g key={`planet-${i}`}>
@@ -84,8 +120,8 @@ export const AstroRadar = ({ planets }: { planets: Planet[] }) => {
                   fontSize="8" 
                   fontWeight="bold"
                   fontFamily="var(--font-jetbrains-mono)" 
-                  textAnchor="middle" 
-                  alignmentBaseline="middle"
+                  textAnchor={textAnchor}
+                  alignmentBaseline={alignmentBaseline}
                   style={{ 
                     textShadow: `0 0 10px ${p.color}`,
                     // Додаткова страховка: фон під текстом, щоб читалось на лініях

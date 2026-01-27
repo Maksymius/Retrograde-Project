@@ -149,19 +149,19 @@ export function ResultCard({ date, location, apiResponse }: ResultCardProps) {
             
             {/* 4. ШТАМП (Фінальний акорд) */}
             {stage >= 4 && (
-              <div className="absolute bottom-0 right-0 sm:bottom-4 sm:right-4 z-50 pointer-events-none origin-bottom-right">
+              <div className="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 z-50 pointer-events-none origin-bottom-right">
                 <div className="
                   relative
-                  border-[3px] sm:border-[5px] border-retro-error 
-                  text-retro-error font-black 
-                  text-xl sm:text-3xl 
-                  px-3 py-1 sm:px-4 sm:py-2
+                  border-[2px] sm:border-[3px] border-retro-error/40
+                  text-retro-error/50 font-black 
+                  text-sm sm:text-xl 
+                  px-2 py-0.5 sm:px-3 sm:py-1
                   tracking-widest uppercase
                   animate-stamp 
-                  bg-red-950/10 backdrop-blur-[1px]
-                  shadow-[0_0_15px_rgba(255,51,51,0.3)]
+                  bg-red-950/5 backdrop-blur-[0.5px]
+                  shadow-[0_0_10px_rgba(255,51,51,0.15)]
                   rotate-[-12deg]
-                  mix-blend-hard-light
+                  mix-blend-normal
                 ">
                   REJECTED
                 </div>

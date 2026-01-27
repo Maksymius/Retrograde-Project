@@ -21,7 +21,7 @@ export const SciFiBackground = () => {
   }, [])
 
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none select-none z-0 opacity-[1.15] brightness-120">
       
       {/* 1. ГЛИБИНА: Комбінована сітка (більш видима на мобільних) */}
       <div 
