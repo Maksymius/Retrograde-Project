@@ -420,17 +420,27 @@ export default function HomePage() {
             <div className="space-y-5 backdrop-blur-md bg-black/40 p-4 sm:p-8 rounded-lg border border-zinc-800/60 shadow-2xl animate-in slide-in-from-bottom-4 duration-700 min-h-[600px]">
               
               {/* Гонзострологічна інструкція */}
-              <div className="p-3 bg-amber-900/10 border-l-2 border-amber-500/30 text-left">
+              <div className="p-4 bg-amber-900/10 border-l-2 border-amber-500/30 text-left space-y-3">
+                <div className="text-[11px] text-amber-300 font-bold uppercase tracking-wider">
+                  НЕБЕСНА КАНЦЕЛЯРІЯ [Відділ Сарказму]
+                </div>
                 <p className="text-[10px] text-amber-400 leading-relaxed font-mono">
-                  <span className="text-amber-300 font-bold">ГОНЗОСТРОЛОГІЯ:</span> Заповніть дату народження і місто. 
-                  Система видасть вердикт про вашу долю. Увага: це справжня гонзострологія, тож обережно — 
-                  правда, яку ви отримаєте, може не сподобатись.
+                  Заповніть формуляр, аби дізнатися, чому світила зійшлися саме так — ніби хтось у вищих сферах мав дивне почуття гумору.
+                </p>
+                <p className="text-[10px] text-zinc-400 leading-relaxed font-mono">
+                  Це справжня <span className="text-amber-400 font-bold">Гонзострологія</span> — суміш астрофізики та сільської магії. 
+                  Ми не пророкуємо «успіх і кохання в третьому кварталі».
+                </p>
+                <p className="text-[10px] text-zinc-500 leading-relaxed font-mono italic">
+                  Ми пояснюємо, чому ваша велич відкладена на наступну інкарнацію з кращим бюджетом.
                 </p>
               </div>
 
               {/* INPUT AREA - Date */}
               <div className="space-y-2">
-                <label className="text-xs text-zinc-500 uppercase tracking-wider font-mono">Дата народження</label>
+                <label className="text-xs text-zinc-400 font-mono leading-relaxed">
+                  <span className="text-amber-400 font-bold">Дата народження</span>
+                </label>
                 <DatePicker
                   value={queryData.date || '1991-08-24'}
                   onChange={(date) => setQueryData({ ...queryData, date })}
@@ -439,7 +449,9 @@ export default function HomePage() {
 
               {/* INPUT AREA - City with Autocomplete */}
               <div className="w-full relative group city-autocomplete">
-                <label className="text-xs text-zinc-500 uppercase tracking-wider font-mono block mb-2">Місто народження</label>
+                <label className="text-xs text-zinc-400 font-mono leading-relaxed block mb-2">
+                  <span className="text-amber-400 font-bold">Місто народження</span>
+                </label>
                 <div className="relative">
                   <input
                     type="text"
