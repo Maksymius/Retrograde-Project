@@ -583,7 +583,7 @@ export default function HomePage() {
 
       {/* Астрологічний футер */}
       {currentDate && (
-        <div className="fixed bottom-0 right-0 p-4 text-[9px] font-mono text-zinc-700 text-right space-y-0.5 pointer-events-none select-none">
+        <div className="fixed bottom-0 right-0 p-4 text-[9px] font-mono text-zinc-500 text-right space-y-0.5 pointer-events-none select-none">
           <div className="opacity-70">
             Updated: {currentDate}
           </div>
