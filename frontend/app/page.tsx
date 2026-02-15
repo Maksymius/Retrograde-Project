@@ -440,7 +440,7 @@ export default function HomePage() {
               {/* Гонзострологічна інструкція */}
               <div className="p-4 bg-amber-900/10 border-l-2 border-amber-500/30 text-left space-y-3">
                 <div className="text-[11px] text-amber-300 font-bold uppercase tracking-wider">
-                  НЕБЕСНА КАНЦЕЛЯРІЯ [Відділ Сарказму]
+                  НЕБЕСНА КАНЦЕЛЯРІЯ (Відділ Сарказму)
                 </div>
                 <p className="text-[10px] text-amber-400 leading-relaxed font-mono">
                   Заповніть формуляр, аби дізнатися, чому світила зійшлися саме так — ніби хтось у вищих сферах мав дивне почуття гумору.
@@ -457,7 +457,9 @@ export default function HomePage() {
               {/* INPUT AREA - Date */}
               <div className="space-y-2">
                 <label className="text-xs text-zinc-400 font-mono leading-relaxed">
-                  <span className="text-amber-400 font-bold">Дата народження</span>
+                  <span className="text-amber-400 font-bold">Дата початку відбування покарання на Землі</span>
+                  <br />
+                  <span className="text-[10px] text-zinc-600 italic">(День, коли ви програли в генетичну лотерею)</span>
                 </label>
                 <DatePicker
                   value={queryData.date || '1991-08-24'}
@@ -468,7 +470,9 @@ export default function HomePage() {
               {/* INPUT AREA - City with Autocomplete */}
               <div className="w-full relative group city-autocomplete">
                 <label className="text-xs text-zinc-400 font-mono leading-relaxed block mb-2">
-                  <span className="text-amber-400 font-bold">Місто народження</span>
+                  <span className="text-amber-400 font-bold">Місце приземлення Душі</span>
+                  <br />
+                  <span className="text-[10px] text-zinc-600 italic">(Вкажіть населений пункт на цій грішній кулі)</span>
                 </label>
                 <div className="relative">
                   <input
@@ -476,8 +480,8 @@ export default function HomePage() {
                     value={cityInput}
                     onChange={(e) => handleCityInput(e.target.value)}
                     onFocus={() => setShowSuggestions(true)}
-                    placeholder="Почніть вводити місто..."
-                    className="w-full bg-black border border-zinc-700 p-3 text-lg focus:border-amber-500 outline-none text-white font-mono rounded hover:border-amber-400 transition-colors"
+                    placeholder="Введіть координати вашого спавну (місто, смт, хутір)..."
+                    className="w-full bg-black border border-zinc-700 p-3 text-sm focus:border-amber-500 outline-none text-white font-mono rounded hover:border-amber-400 transition-colors"
                   />
                   
                   {/* Loading indicator */}
