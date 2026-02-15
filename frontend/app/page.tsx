@@ -8,10 +8,10 @@ import { GlitchEffect } from '@/components/Terminal/GlitchEffect'
 import { SoundIndicator } from '@/components/Terminal/SoundIndicator'
 import { ResultCard } from '@/components/ResultCard'
 import { SciFiBackground } from '@/components/Terminal/SciFiBackground'
+import { DatePicker } from '@/components/Entity/DatePicker'
 import Link from 'next/link'
 
 export default function HomePage() {
-  const [input, setInput] = useState('')
   const [isConnecting, setIsConnecting] = useState(false)
   const [showWelcome, setShowWelcome] = useState(false)
   const [showResult, setShowResult] = useState(false)
@@ -19,7 +19,7 @@ export default function HomePage() {
     date: string; 
     location: string; 
     apiResponse?: any 
-  }>({ date: '', location: '' })
+  }>({ date: '1991-08-24', location: '' })
   const [glitchTrigger, setGlitchTrigger] = useState(false)
   const [soundActive, setSoundActive] = useState(false)
   
@@ -35,54 +35,6 @@ export default function HomePage() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  const getRandomDate = () => {
-    const year = 1970 + Math.floor(Math.random() * 40)
-    const month = 1 + Math.floor(Math.random() * 12)
-    const day = 1 + Math.floor(Math.random() * 28)
-    return `${day.toString().padStart(2, '0')}.${month.toString().padStart(2, '0')}.${year}`
-  }
-
-  const examples = [
-    { text: `${getRandomDate()}, Kyiv`, label: "KYIV" },
-    { text: `${getRandomDate()}, Lviv`, label: "LVIV" },
-    { text: `${getRandomDate()}, Odesa`, label: "ODESA" },
-  ]
-
-  const parseInput = (inputStr: string) => {
-    const parts = inputStr.split(',').map(p => p.trim())
-    let date = ''
-    let location = ''
-    
-    for (const part of parts) {
-      if (/\d{1,2}[.\-/]\d{1,2}[.\-/]\d{4}/.test(part)) {
-        const dateMatch = part.match(/(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})/)
-        if (dateMatch) {
-          const [, day, month, year] = dateMatch
-          date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-        }
-      } else if (part && !date) {
-        location = part
-      } else if (part && !location) {
-        location = part
-      }
-    }
-    
-    if (!date && !location && parts.length >= 2) {
-      location = parts[0]
-      const dateStr = parts[1]
-      const dateMatch = dateStr.match(/(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})/)
-      if (dateMatch) {
-        const [, day, month, year] = dateMatch
-        date = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-      }
-    }
-    
-    return {
-      date: date || '1991-08-24',
-      location: location || 'Unknown Location'
-    }
-  }
-
   const triggerGlitch = () => {
     setGlitchTrigger(true)
     setTimeout(() => setGlitchTrigger(false), 100)
@@ -94,9 +46,7 @@ export default function HomePage() {
   }
 
   const handleSubmit = async () => {
-    if (input.trim()) {
-      const parsed = parseInput(input)
-      setQueryData(parsed)
+    if (queryData.location && queryData.date) {
       setIsConnecting(true)
       triggerSound('connection')
       triggerGlitch()
@@ -112,15 +62,15 @@ export default function HomePage() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            city: parsed.location,
-            date: parsed.date
+            city: queryData.location,
+            date: queryData.date
           })
         })
         
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
         
         const data = await response.json()
-        setQueryData({ ...parsed, apiResponse: data })
+        setQueryData({ ...queryData, apiResponse: data })
         
         clearInterval(glitchInterval)
         setIsConnecting(false)
@@ -130,7 +80,7 @@ export default function HomePage() {
       } catch (error) {
         clearInterval(glitchInterval)
         setQueryData({
-          ...parsed,
+          ...queryData,
           apiResponse: {
             status: "error",
             data: {
@@ -149,9 +99,8 @@ export default function HomePage() {
   }
 
   const handleReset = () => {
-    setInput('')
     setShowResult(false)
-    setQueryData({ date: '', location: '' })
+    setQueryData({ date: '1991-08-24', location: '' })
     triggerSound('typing')
   }
 
@@ -398,63 +347,43 @@ export default function HomePage() {
           {showWelcome && !isConnecting && !showResult && (
             <div className="space-y-5 backdrop-blur-md bg-black/40 p-4 sm:p-8 rounded-lg border border-zinc-800/60 shadow-2xl animate-in slide-in-from-bottom-4 duration-700">
               
-              {/* INPUT AREA */}
+              {/* Гонзострологічна інструкція */}
+              <div className="p-3 bg-amber-900/10 border-l-2 border-amber-500/30 text-left">
+                <p className="text-[10px] text-amber-400 leading-relaxed font-mono">
+                  <span className="text-amber-300 font-bold">ГОНЗОСТРОЛОГІЯ:</span> Заповніть дату народження і місто. 
+                  Система видасть вердикт про вашу долю. Увага: це справжня гонзострологія, тож обережно — 
+                  правда, яку ви отримаєте, може не сподобатись.
+                </p>
+              </div>
+
+              {/* INPUT AREA - Date */}
+              <div className="space-y-2">
+                <label className="text-xs text-zinc-500 uppercase tracking-wider font-mono">Дата народження</label>
+                <DatePicker
+                  value={queryData.date || '1991-08-24'}
+                  onChange={(date) => setQueryData({ ...queryData, date })}
+                />
+              </div>
+
+              {/* INPUT AREA - City */}
               <div className="w-full relative group">
-                {/* Glow effect on focus (handled by component, but wrapper helps) */}
+                <label className="text-xs text-zinc-500 uppercase tracking-wider font-mono block mb-2">Місто народження</label>
                 <TerminalInput
-                  placeholder="root@retrograde:~$ "
-                  value={input}
+                  placeholder="Kyiv, Lviv, Odesa..."
+                  value={queryData.location}
                   onChange={(value) => {
-                    setInput(value)
+                    setQueryData({ ...queryData, location: value })
                     if (Math.random() > 0.9) triggerSound('typing')
                   }}
                   onSubmit={handleSubmit}
-                  className="w-full text-base sm:text-lg" // text-base prevents iOS zoom
+                  className="w-full text-base sm:text-lg"
                 />
-              </div>
-              
-              {/* QUICK ACTIONS (Mobile Optimized) */}
-              <div className="space-y-2">
-                 <p className="text-[9px] text-zinc-600 font-mono uppercase tracking-wider text-center sm:text-left">Quick Access Protocols:</p>
-                 <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
-                  {examples.map((example, i) => (
-                    <button
-                      key={i}
-                      onClick={() => setInput(example.text)}
-                      className="
-                        text-[10px] sm:text-xs font-mono 
-                        text-zinc-400 hover:text-retro-primary 
-                        border border-zinc-800 hover:border-retro-primary/50 bg-black/50
-                        px-3 py-2 sm:py-1.5 rounded transition-all duration-200
-                        active:scale-95 active:bg-retro-primary/10
-                      "
-                    >
-                      {example.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              
-              {/* MAIN BUTTON */}
-              <div className="pt-2 sm:pt-4">
-                <Button 
-                  onClick={handleSubmit}
-                  disabled={!input.trim()}
-                  className="
-                    w-full py-4 sm:py-5 
-                    text-xs sm:text-sm font-mono tracking-[0.25em] 
-                    hover:shadow-[0_0_30px_rgba(255,176,0,0.2)] 
-                    border-retro-primary/30 active:translate-y-0.5
-                  "
-                >
-                  [ INITIATE_PROTOCOL ]
-                </Button>
               </div>
               
               {/* FOOTER INFO */}
               <div className="flex flex-col sm:flex-row justify-between gap-1 text-[9px] font-mono text-zinc-700 uppercase text-center sm:text-left pt-2">
-                <span>Format: DD.MM.YYYY, CITY</span>
-                <span className="opacity-50">Encypted via StarLink-12</span>
+                <span>Гонзострологія v2.1.4</span>
+                <span className="opacity-50">Encrypted via StarLink-12</span>
               </div>
             </div>
           )}
