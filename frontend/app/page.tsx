@@ -31,6 +31,11 @@ export default function HomePage() {
   
   // State для відстеження висоти екрану (фікс для мобільних браузерів з баром навігації)
   const [minHeight, setMinHeight] = useState('100vh')
+  
+  // State для динамічних значень футера (уникаємо hydration mismatch)
+  const [currentDate, setCurrentDate] = useState('')
+  const [currentTime, setCurrentTime] = useState('')
+  const [gravFlux, setGravFlux] = useState('0.000')
 
   useEffect(() => {
     // Встановлюємо реальну висоту вьюпорта (dvh fallback)
@@ -39,6 +44,19 @@ export default function HomePage() {
     const handleResize = () => setMinHeight(window.innerHeight + 'px')
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    // Ініціалізуємо динамічні значення на клієнті
+    const updateFooter = () => {
+      setCurrentDate(new Date().toLocaleDateString('uk-UA'))
+      setCurrentTime(new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' }))
+      setGravFlux((Math.sin(Date.now() / 10000) * 0.5 + 0.5).toFixed(3))
+    }
+    
+    updateFooter()
+    const interval = setInterval(updateFooter, 1000)
+    return () => clearInterval(interval)
   }, [])
 
   const triggerGlitch = () => {
@@ -560,20 +578,22 @@ export default function HomePage() {
       </div>
 
       {/* Астрологічний футер */}
-      <div className="fixed bottom-0 right-0 p-4 text-[9px] font-mono text-zinc-700 text-right space-y-0.5 pointer-events-none select-none">
-        <div className="opacity-70">
-          Updated: {new Date().toLocaleDateString('uk-UA')}
+      {currentDate && (
+        <div className="fixed bottom-0 right-0 p-4 text-[9px] font-mono text-zinc-700 text-right space-y-0.5 pointer-events-none select-none">
+          <div className="opacity-70">
+            Updated: {currentDate}
+          </div>
+          <div className="opacity-60">
+            Astro Time: {currentTime} UTC
+          </div>
+          <div className="opacity-50">
+            Gravitational Flux: {gravFlux}G
+          </div>
+          <div className="opacity-40 text-[8px] mt-1">
+            © TAob
+          </div>
         </div>
-        <div className="opacity-60">
-          Astro Time: {new Date().toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })} UTC
-        </div>
-        <div className="opacity-50">
-          Gravitational Flux: {(Math.sin(Date.now() / 10000) * 0.5 + 0.5).toFixed(3)}G
-        </div>
-        <div className="opacity-40 text-[8px] mt-1">
-          © TAob
-        </div>
-      </div>
+      )}
     </main>
   )
 }
